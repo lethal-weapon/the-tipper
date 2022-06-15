@@ -1,8 +1,6 @@
 from tkinter import *
-from src.utils.constants import Style
 
-TAB_WIDTH = 200
-TAB_HEIGHT = 50
+from src.utils.constants import Widget, Style
 
 
 class Tab:
@@ -11,12 +9,12 @@ class Tab:
         self.parent = parent
         self.canvas = Canvas(
             parent_widget,
-            width=TAB_WIDTH,
-            height=TAB_HEIGHT,
+            width=Widget.TAB_WIDTH,
+            height=Widget.TAB_HEIGHT,
         )
         self.rectangle = self.canvas.create_polygon(
             self.get_round_rectangle_points(
-                10, 3, 3, TAB_WIDTH - 3, TAB_HEIGHT - 3
+                10, 3, 3, Widget.TAB_WIDTH - 3, Widget.TAB_HEIGHT - 3
             ),
             smooth=True,
             fill='',
@@ -24,7 +22,7 @@ class Tab:
             width=2,
         )
         self.title = self.canvas.create_text(
-            TAB_WIDTH // 2, TAB_HEIGHT // 2,
+            Widget.TAB_WIDTH // 2, Widget.TAB_HEIGHT // 2,
             text=title,
             font='Times 20 bold',
         )
@@ -50,7 +48,6 @@ class Tab:
             self.set_inactive_style()
 
     def select(self, e):
-        # cursor press event doesn't work on selected tab
         self.selected = True
         self.set_active_style()
         self.parent.on_tab_clicked(self)
