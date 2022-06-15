@@ -1,4 +1,4 @@
-from src.ui.the_tipper import TheTipper
+from src.ui.tipper import Tipper
 
 if __name__ == '__main__':
-    TheTipper.launch()
+    Tipper.launch()
