@@ -1,11 +1,11 @@
 from tkinter import *
 
 from src.ui.tab import Tab
-from src.ui.control_content import ControlContent
-from src.ui.input_content import InputContent
-from src.ui.portfolio_content import PortfolioContent
-from src.ui.performance_content import PerformanceContent
-from src.utils.constants import APP_NAME, Widget
+from src.contents.control_content import ControlContent
+from src.contents.input_content import InputContent
+from src.contents.portfolio_content import PortfolioContent
+from src.contents.performance_content import PerformanceContent
+from src.utils.constants import Widget, Misc
 
 
 class Tipper:
@@ -15,7 +15,7 @@ class Tipper:
 
     @classmethod
     def launch(cls):
-        cls.window.title(APP_NAME)
+        cls.window.title(Misc.APP_NAME)
         cls.window.resizable(False, False)
         cls.window.geometry(f'{Widget.WINDOW_WIDTH}x{Widget.WINDOW_HEIGHT}')
 
@@ -26,11 +26,12 @@ class Tipper:
     @classmethod
     def create_tabs(cls):
         frame = Frame(cls.window)
+        callback = cls.on_tab_clicked
 
-        controls = Tab(cls, frame, 'Controls')
-        inputs = Tab(cls, frame, 'Inputs')
-        portfolios = Tab(cls, frame, 'Portfolios')
-        performance = Tab(cls, frame, 'Performance')
+        controls = Tab(frame, 'Controls', callback)
+        inputs = Tab(frame, 'Inputs', callback)
+        portfolios = Tab(frame, 'Portfolios', callback)
+        performance = Tab(frame, 'Performance', callback)
 
         controls.select(0)
         cls.tabs = [controls, inputs, portfolios, performance]

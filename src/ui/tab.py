@@ -5,8 +5,8 @@ from src.utils.constants import Widget, Style
 
 class Tab:
 
-    def __init__(self, parent, parent_widget, title):
-        self.parent = parent
+    def __init__(self, parent_widget, title, callback):
+        self.callback = callback
         self.canvas = Canvas(
             parent_widget,
             width=Widget.TAB_WIDTH,
@@ -48,9 +48,13 @@ class Tab:
             self.set_inactive_style()
 
     def select(self, e):
+        # mouse left key press event doesn't work on selected tab
+        if self.selected:
+            return
+
         self.selected = True
         self.set_active_style()
-        self.parent.on_tab_clicked(self)
+        self.callback(self)
 
     def deselect(self):
         self.selected = False

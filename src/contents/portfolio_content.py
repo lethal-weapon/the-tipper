@@ -1,6 +1,5 @@
 from tkinter import *
-from src.ui.content import Content
-from src.utils.constants import Style
+from src.contents.content import Content
 
 
 class PortfolioContent(Content):

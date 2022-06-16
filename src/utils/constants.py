@@ -1,6 +1,3 @@
-APP_NAME = 'The Tipper'
-
-
 class Widget:
     WINDOW_WIDTH = 900
     WINDOW_HEIGHT = WINDOW_WIDTH * 5 // 8
@@ -11,3 +8,8 @@ class Widget:
 
 class Style:
     FILL = 'fill'
+
+
+class Misc:
+    APP_NAME = 'The Tipper'
+    NULL = 'NULL'
