@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import *
 
 from src.utils.constants import Misc
@@ -6,22 +7,38 @@ from src.utils.constants import Misc
 class Dropdown:
 
     def __init__(self, parent_widget, options, callback, pack_style):
+        self.callback = callback
         self.options = [str(o) for o in options]
         self.selected = StringVar()
         self.selected.set(Misc.NULL)
-        if len(options) > 0:
-            self.selected.set(options[0])
+        if len(self.options) > 0:
+            self.selected.set(self.options[0])
 
         self.dropdown = OptionMenu(
             parent_widget,
             self.selected,
-            *options,
-            command=callback
+            *self.options,
+            command=self.callback
         )
         self.dropdown.pack(pack_style)
 
+    def set_options(self, new_options: list):
+        self.options = [str(o) for o in new_options]
+        self.selected.set(Misc.NULL)
+        self.dropdown['menu'].delete(0, 'end')
+
+        for opt in self.options:
+            self.dropdown['menu'].add_command(
+                label=opt, command=tk._setit(self.selected, opt, self.callback)
+            )
+        self.selected.set(self.options[0])
+
     def get_selected_option(self):
         return self.selected.get()
+
+    def select(self, new_option):
+        if new_option in self.options:
+            self.selected.set(new_option)
 
     def select_first(self):
         self.selected.set(self.options[0])
