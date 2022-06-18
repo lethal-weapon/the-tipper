@@ -1,6 +1,6 @@
 from tkinter import *
 
-from src.utils.constants import Style, Color
+from src.utils.constants import Style, Color, MessageLevel
 
 
 class Content:
@@ -12,10 +12,12 @@ class Content:
     def pack_message(self):
         self.message.pack(side=RIGHT)
 
-    def set_message(self, is_success: bool, text: str):
+    def set_message(self, level: str, text: str):
         self.message.__setitem__(Style.TEXT, text)
 
-        if is_success:
-            self.message.__setitem__(Style.FG, Color.GREEN)
-        else:
+        if level == MessageLevel.INFO:
+            self.message.__setitem__(Style.FG, Color.BLUE)
+        elif level == MessageLevel.ERROR:
             self.message.__setitem__(Style.FG, Color.RED)
+        elif level == MessageLevel.SUCCESS:
+            self.message.__setitem__(Style.FG, Color.GREEN)

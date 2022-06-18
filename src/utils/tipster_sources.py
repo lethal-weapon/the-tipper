@@ -17,6 +17,7 @@ TIPSTER_SOURCES = {
         'KC',
     ],
     'Newspaper': [
+        'iRace',
         'Daily',
         'HKDN',
         'Sun Journal',
@@ -24,5 +25,14 @@ TIPSTER_SOURCES = {
     ],
     'racing.on.cc': [
         '張基',
+        '卡洛斯',
+        '匡公',
+        '金駒',
+        '西門獨',
+        '諸葛數',
+        '長風',
+        '蔡俊佳',
+        '陳志懷',
+        '明治朗',
     ],
 }

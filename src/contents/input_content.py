@@ -1,5 +1,8 @@
 from tkinter import *
+from datetime import date
 
+from src.storage.storage import Storage
+from src.utils.constants import Tip, MessageLevel
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
 from src.ui.tipster_selector import TipsterSelector
@@ -37,21 +40,7 @@ class InputContent(Content):
 
         self.pack_message()
         self.frame.pack()
-
-    def save(self):
-        """ Save tips into storage according to the UI state. """
-        race_date, race_num = \
-            self.race_picker.get_race_date_num()
-        source, tipster, is_confident = \
-            self.tipster_picker.get_source_tipster_confident()
-        tips = \
-            self.horse_entry.get_values()
-
-        try:
-            # TODO: saving
-            self.set_message(True, f'{tipster} tips saved.')
-        except:
-            self.set_message(False, f'{tipster} tips failed to save.')
+        self.load()
 
     def load(self):
         """ Loads tips from storage according to the UI state. """
@@ -59,22 +48,71 @@ class InputContent(Content):
             self.race_picker.get_race_date_num()
         source, tipster, is_confident = \
             self.tipster_picker.get_source_tipster_confident()
+        prefix = f'{tipster} tips'
+        msg_loaded, msg_non_exist, msg_duplicated, msg_fail = \
+            f'{prefix} loaded.', \
+            f'{prefix} does not exist.', \
+            f'{prefix} got duplicates.', \
+            f'{prefix} failed to load.'
 
         try:
-            # TODO: loading
-            print(f'Loading tips for '
-                  f'<{race_date}, {race_num}, {source}, {tipster}>')
-            self.set_message(True, f'{tipster} tips loaded.')
+            tips = Storage.get_race_tips(race_date, race_num)
+            if tips is None or len(tips) < 1:
+                self.set_message(MessageLevel.INFO, msg_non_exist)
+                return
+
+            matches = list(filter(
+                lambda t: t[Tip.SOURCE] == source and t[Tip.TIPSTER] == tipster,
+                tips
+            ))
+            if len(matches) == 0:
+                self.set_message(MessageLevel.INFO, msg_non_exist)
+            elif len(matches) == 1:
+                self.tipster_picker.set_confident(matches[0][Tip.CONFIDENT])
+                self.horse_entry.set_values(matches[0][Tip.TIP])
+                self.set_message(MessageLevel.SUCCESS, msg_loaded)
+            else:
+                self.set_message(MessageLevel.ERROR, msg_duplicated)
         except:
-            self.set_message(False, f'{tipster} tips failed to load.')
+            self.set_message(MessageLevel.ERROR, msg_fail)
+
+    def save(self):
+        """ Save tips into storage according to the UI state. """
+        race_date, race_num = \
+            self.race_picker.get_race_date_num()
+        source, tipster, is_confident = \
+            self.tipster_picker.get_source_tipster_confident()
+        tip = self.horse_entry.get_values()
+        prefix = f'{tipster} tips'
+        msg_saved, msg_fail = \
+            f'{prefix} saved.', \
+            f'{prefix} failed to save.'
+
+        try:
+            # TODO: saving
+            self.set_message(MessageLevel.SUCCESS, msg_saved)
+        except:
+            self.set_message(MessageLevel.ERROR, msg_fail)
 
     @staticmethod
     def get_race_days() -> dict:
         """
-        Return up to the most recent 5 race days
+        Return up to the most recent 3 race days
         and the total races for each one of them.
         """
-        return {
-            '2022-01-01': 4,
-            '2022-01-02': 5,
-        }
+        temp, races = {}, {}
+        for (race_date, race_num) in Storage.get_race_tuples():
+            if race_date not in temp:
+                temp[race_date] = race_num
+            else:
+                if race_num > temp[race_date]:
+                    temp[race_date] = race_num
+
+        dates = [date.fromisoformat(d) for d in temp.keys()]
+        dates.sort(reverse=True)
+        dates = [d.isoformat() for d in dates]
+
+        for i in range(min(len(dates), 3)):
+            races[dates[i]] = temp[dates[i]]
+
+        return races
