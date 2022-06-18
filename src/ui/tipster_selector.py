@@ -6,8 +6,12 @@ from src.utils.tipster_sources import TIPSTER_SOURCES
 
 class TipsterSelector:
 
-    def __init__(self, parent_widget, pady: int):
+    def __init__(self,
+                 parent_widget,
+                 callback,
+                 pady: int):
         frame = Frame(parent_widget)
+        self.callback = callback
 
         font_style = 'Times 16 italic'
         regular_style = {'side': LEFT, 'padx': 10}
@@ -49,8 +53,7 @@ class TipsterSelector:
                self.confident.get() == 1
 
     def on_changed(self, *e):
-        # print(self.get_source_tipster_confident())
-        pass
+        self.callback()
 
     def on_source_changed(self, e):
         self.tipster.set_options(TIPSTER_SOURCES[e])

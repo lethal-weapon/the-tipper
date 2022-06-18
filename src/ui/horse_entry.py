@@ -1,26 +1,30 @@
 from tkinter import *
 
-from src.utils.ordinals import ORDINALS
+from src.utils.constants import Color, Misc
 
 
 class HorseEntry:
 
-    def __init__(self, parent_widget, entries: int, pady: int):
+    def __init__(self,
+                 parent_widget,
+                 entries: int,
+                 pady: int):
         frame = Frame(parent_widget)
 
         label_style = 'Times 16 bold'
         entry_style = 'Times 18'
+        self.entries = entries
         self.numbers = []
 
         for i in range(1, entries + 1):
-            Label(frame, text=ORDINALS[i], font=label_style) \
+            Label(frame, text=Misc.ORDINALS[i], font=label_style) \
                 .grid(row=1, column=i, padx=20, pady=5)
 
             number = StringVar()
             Entry(frame,
                   textvariable=number,
                   font=entry_style,
-                  fg='red',
+                  fg=Color.RED,
                   width=5,
                   borderwidth=5,
                   justify=CENTER) \
@@ -31,7 +35,7 @@ class HorseEntry:
         frame.pack(pady=pady)
 
     def set_values(self, values: [int]):
-        if len(values) <= 4:
+        if len(values) <= self.entries:
             for i in range(len(values)):
                 self.numbers[i].set(values[i])
 

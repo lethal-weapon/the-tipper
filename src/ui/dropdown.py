@@ -6,7 +6,11 @@ from src.utils.constants import Misc
 
 class Dropdown:
 
-    def __init__(self, parent_widget, options, callback, pack_style):
+    def __init__(self,
+                 parent_widget,
+                 options,
+                 callback,
+                 pack_style):
         self.callback = callback
         self.options = [str(o) for o in options]
         self.selected = StringVar()

@@ -5,8 +5,13 @@ from src.ui.dropdown import Dropdown
 
 class RaceSelector:
 
-    def __init__(self, parent_widget, races: dict, pady: int):
+    def __init__(self,
+                 parent_widget,
+                 callback,
+                 races: dict,
+                 pady: int):
         frame = Frame(parent_widget)
+        self.callback = callback
         self.races = races
 
         font_style = 'Times 16 italic'
@@ -43,9 +48,8 @@ class RaceSelector:
         races = self.races[self.race_date.get_selected_option()]
         return [str(r) for r in range(1, races + 1)]
 
-    def on_race_changed(self):
-        # print(self.get_race_date_num())
-        pass
+    def on_changed(self, *e):
+        self.callback()
 
     def on_date_changed(self, e):
         # save the current race num
@@ -59,10 +63,10 @@ class RaceSelector:
         if curr_num in self.get_race_nums():
             self.race_num.select(curr_num)
 
-        self.on_race_changed()
+        self.on_changed(e)
 
     def on_num_changed(self, e):
-        self.on_race_changed()
+        self.on_changed(e)
 
     def to_previous(self):
         if self.race_num.is_first():
@@ -75,7 +79,7 @@ class RaceSelector:
         else:
             self.race_num.select_previous()
 
-        self.on_race_changed()
+        self.on_changed()
 
     def to_next(self):
         if self.race_num.is_last():
@@ -88,4 +92,4 @@ class RaceSelector:
         else:
             self.race_num.select_next()
 
-        self.on_race_changed()
+        self.on_changed()

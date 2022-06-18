@@ -1,11 +1,14 @@
 from tkinter import *
 
-from src.utils.constants import Widget, Style
+from src.utils.constants import Widget, Style, Color
 
 
 class Tab:
 
-    def __init__(self, parent_widget, title, callback):
+    def __init__(self,
+                 parent_widget,
+                 callback,
+                 title):
         self.callback = callback
         self.canvas = Canvas(
             parent_widget,
@@ -17,8 +20,8 @@ class Tab:
                 10, 3, 3, Widget.TAB_WIDTH - 3, Widget.TAB_HEIGHT - 3
             ),
             smooth=True,
-            fill='',
-            outline='black',
+            fill=Color.NONE,
+            outline=Color.BLACK,
             width=2,
         )
         self.title = self.canvas.create_text(
@@ -61,12 +64,12 @@ class Tab:
         self.set_inactive_style()
 
     def set_active_style(self):
-        self.canvas.itemconfig(self.rectangle, fill='black')
-        self.canvas.itemconfig(self.title, fill='white')
+        self.canvas.itemconfig(self.rectangle, fill=Color.BLACK)
+        self.canvas.itemconfig(self.title, fill=Color.WHITE)
 
     def set_inactive_style(self):
-        self.canvas.itemconfig(self.rectangle, fill='')
-        self.canvas.itemconfig(self.title, fill='black')
+        self.canvas.itemconfig(self.rectangle, fill=Color.NONE)
+        self.canvas.itemconfig(self.title, fill=Color.BLACK)
 
     @staticmethod
     def get_round_rectangle_points(radius, x1, y1, x2, y2):

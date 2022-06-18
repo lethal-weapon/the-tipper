@@ -28,10 +28,10 @@ class Tipper:
         frame = Frame(cls.window)
         callback = cls.on_tab_clicked
 
-        controls = Tab(frame, 'Controls', callback)
-        inputs = Tab(frame, 'Inputs', callback)
-        portfolios = Tab(frame, 'Portfolios', callback)
-        performance = Tab(frame, 'Performance', callback)
+        controls = Tab(frame, callback, 'Controls')
+        inputs = Tab(frame, callback, 'Inputs')
+        portfolios = Tab(frame, callback, 'Portfolios')
+        performance = Tab(frame, callback, 'Performance')
 
         inputs.select(0)
         cls.tabs = [controls, inputs, portfolios, performance]
