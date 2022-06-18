@@ -5,13 +5,13 @@ from src.ui.dropdown import Dropdown
 
 class RaceSelector:
 
-    def __init__(self, parent_widget, races: dict):
+    def __init__(self, parent_widget, races: dict, pady: int):
         frame = Frame(parent_widget)
         self.races = races
 
         font_style = 'Times 16 italic'
-        regular_style = {'side': LEFT, 'padx': 10, 'pady': 30}
-        button_style = {'side': RIGHT, 'padx': 5, 'pady': 30}
+        regular_style = {'side': LEFT, 'padx': 10}
+        button_style = {'side': RIGHT, 'padx': 5}
 
         Label(frame, text='Meeting', font=font_style).pack(regular_style)
         self.race_date = Dropdown(
@@ -25,14 +25,14 @@ class RaceSelector:
         )
 
         Label(frame, text='').pack(regular_style)
-        Button(frame, text='Previous', command=self.to_previous).pack(button_style)
         Button(frame, text='Next', command=self.to_next).pack(button_style)
+        Button(frame, text='Previous', command=self.to_previous).pack(button_style)
 
-        frame.pack()
+        frame.pack(pady=pady)
 
-    def get_race_date_num(self) -> (str, str):
+    def get_race_date_num(self) -> (str, int):
         return self.race_date.get_selected_option(), \
-               self.race_num.get_selected_option()
+               int(self.race_num.get_selected_option())
 
     def get_race_dates(self) -> [str]:
         dates = list(self.races.keys())
@@ -44,7 +44,8 @@ class RaceSelector:
         return [str(r) for r in range(1, races + 1)]
 
     def on_race_changed(self):
-        print(self.get_race_date_num())
+        # print(self.get_race_date_num())
+        pass
 
     def on_date_changed(self, e):
         # save the current race num

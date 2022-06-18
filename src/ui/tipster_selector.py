@@ -6,11 +6,11 @@ from src.utils.tipster_sources import TIPSTER_SOURCES
 
 class TipsterSelector:
 
-    def __init__(self, parent_widget):
+    def __init__(self, parent_widget, pady: int):
         frame = Frame(parent_widget)
 
         font_style = 'Times 16 italic'
-        regular_style = {'side': LEFT, 'padx': 10, 'pady': 25}
+        regular_style = {'side': LEFT, 'padx': 10}
 
         Label(frame, text='Source', font=font_style).pack(regular_style)
         self.source = Dropdown(
@@ -35,11 +35,10 @@ class TipsterSelector:
         self.confident_check = Checkbutton(
             frame,
             variable=self.confident,
-            command=self.on_changed,
         )
         self.confident_check.pack(regular_style)
 
-        frame.pack()
+        frame.pack(pady=pady)
 
     def get_tipsters(self) -> [str]:
         return TIPSTER_SOURCES[self.source.get_selected_option()]
@@ -50,8 +49,12 @@ class TipsterSelector:
                self.confident.get() == 1
 
     def on_changed(self, *e):
-        print(self.get_source_tipster_confident())
+        # print(self.get_source_tipster_confident())
+        pass
 
     def on_source_changed(self, e):
         self.tipster.set_options(TIPSTER_SOURCES[e])
         self.on_changed(e)
+
+    def set_confident(self, is_confident: bool):
+        self.confident.set(1 if is_confident else 0)

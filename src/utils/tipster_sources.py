@@ -17,7 +17,9 @@ TIPSTER_SOURCES = {
         'KC',
     ],
     'Newspaper': [
-        'Racing Daily News',
+        'Daily',
+        'HKDN',
+        'Sun Journal',
         'Today Jockey',
     ],
     'racing.on.cc': [
