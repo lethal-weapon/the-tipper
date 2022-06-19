@@ -52,3 +52,7 @@ class HorseEntry:
                 pass
 
         return numbers
+
+    def clear(self):
+        for number in self.numbers:
+            number.set('')

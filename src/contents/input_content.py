@@ -49,30 +49,26 @@ class InputContent(Content):
         source, tipster, is_confident = \
             self.tipster_picker.get_source_tipster_confident()
         prefix = f'{tipster} tips'
-        msg_loaded, msg_non_exist, msg_duplicated, msg_fail = \
+        msg_loaded, msg_non_exist, msg_fail = \
             f'{prefix} loaded.', \
             f'{prefix} does not exist.', \
-            f'{prefix} got duplicates.', \
             f'{prefix} failed to load.'
 
+        # reset the entry fields before loading anything
+        self.tipster_picker.set_confident(False)
+        self.horse_entry.clear()
+
         try:
-            tips = Storage.get_race_tips(race_date, race_num)
-            if tips is None or len(tips) < 1:
+            tip = Storage.get_tip(race_date, race_num, source, tipster)
+            if tip is None:
                 self.set_message(MessageLevel.INFO, msg_non_exist)
                 return
 
-            matches = list(filter(
-                lambda t: t[Tip.SOURCE] == source and t[Tip.TIPSTER] == tipster,
-                tips
-            ))
-            if len(matches) == 0:
-                self.set_message(MessageLevel.INFO, msg_non_exist)
-            elif len(matches) == 1:
-                self.tipster_picker.set_confident(matches[0][Tip.CONFIDENT])
-                self.horse_entry.set_values(matches[0][Tip.TIP])
-                self.set_message(MessageLevel.SUCCESS, msg_loaded)
-            else:
-                self.set_message(MessageLevel.ERROR, msg_duplicated)
+            self.tipster_picker.set_confident(tip[Tip.CONFIDENT])
+            self.horse_entry.set_values(tip[Tip.TIP])
+            self.set_message(MessageLevel.SUCCESS, msg_loaded)
+        except RuntimeError as ex:
+            self.set_message(MessageLevel.ERROR, str(ex))
         except:
             self.set_message(MessageLevel.ERROR, msg_fail)
 
@@ -89,7 +85,12 @@ class InputContent(Content):
             f'{prefix} failed to save.'
 
         try:
-            # TODO: saving
+            Storage.save_tip(race_date, race_num, {
+                Tip.SOURCE: source,
+                Tip.TIPSTER: tipster,
+                Tip.TIP: tip,
+                Tip.CONFIDENT: is_confident,
+            })
             self.set_message(MessageLevel.SUCCESS, msg_saved)
         except:
             self.set_message(MessageLevel.ERROR, msg_fail)
