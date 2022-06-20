@@ -10,7 +10,7 @@ class Storage:
     @classmethod
     def initialize(cls):
         cls.data = DUMMY
-        cls.print()
+        # cls.print()
 
     @classmethod
     def print(cls):
@@ -25,6 +25,12 @@ class Storage:
     def save_to_database(cls):
         # TODO:
         pass
+
+    @classmethod
+    def get_race_dates(cls) -> [str]:
+        dates = [d[Race.RACE_DATE] for d in cls.data]
+        dates.sort(reverse=True)
+        return dates
 
     @classmethod
     def get_race_tuples(cls) -> [(str, int)]:

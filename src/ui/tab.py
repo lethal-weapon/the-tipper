@@ -50,7 +50,7 @@ class Tab:
         else:
             self.set_inactive_style()
 
-    def select(self, e):
+    def select(self, *e):
         # mouse left key press event doesn't work on selected tab
         if self.selected:
             return

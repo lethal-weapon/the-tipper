@@ -5,7 +5,8 @@ from src.contents.control_content import ControlContent
 from src.contents.input_content import InputContent
 from src.contents.portfolio_content import PortfolioContent
 from src.contents.performance_content import PerformanceContent
-from src.utils.constants import Widget, Misc
+from src.utils.constants import Widget
+from src.settings import SETTINGS
 
 
 class Tipper:
@@ -15,7 +16,7 @@ class Tipper:
 
     @classmethod
     def launch(cls):
-        cls.window.title(Misc.APP_NAME)
+        cls.window.title(SETTINGS.BASE.APP)
         cls.window.resizable(False, False)
         cls.window.geometry(f'{Widget.WINDOW_WIDTH}x{Widget.WINDOW_HEIGHT}')
 
@@ -33,7 +34,7 @@ class Tipper:
         portfolios = Tab(frame, callback, 'Portfolios')
         performance = Tab(frame, callback, 'Performance')
 
-        inputs.select(0)
+        controls.select()
         cls.tabs = [controls, inputs, portfolios, performance]
 
         frame.pack()
@@ -51,7 +52,7 @@ class Tipper:
         PerformanceContent(performance)
 
         cls.contents = [controls, inputs, portfolios, performance]
-        inputs.pack()
+        controls.pack()
 
     @classmethod
     def on_tab_clicked(cls, clicked_tab: Tab):

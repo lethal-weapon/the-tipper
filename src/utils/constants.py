@@ -28,7 +28,6 @@ class MessageLevel:
 
 
 class Misc:
-    APP_NAME = 'The Tipper'
     NULL = 'NULL'
     ORDINALS = {
         1: '1st',
