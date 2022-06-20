@@ -46,7 +46,7 @@ class HorseEntry:
         for s in strings:
             try:
                 n = int(s)
-                if 0 < n < 15:
+                if (0 < n < 15) and (n not in numbers):
                     numbers.append(n)
             except:
                 pass
