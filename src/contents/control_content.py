@@ -5,6 +5,7 @@ from src.contents.content import Content
 from src.storage.storage import Storage
 from src.utils.constants import Race, MessageLevel
 from src.utils.general import get_current_date_and_time
+from src.ui.dropdown import Dropdown
 
 
 class ControlContent(Content):
@@ -12,6 +13,15 @@ class ControlContent(Content):
     def __init__(self, parent_widget):
         super().__init__(parent_widget)
 
+        self.info = None
+        self.race_date = None
+        self.build_info_frame()
+        self.build_button_frame()
+        self.pack_message()
+        self.frame.pack()
+        self.update_info()
+
+    def build_info_frame(self):
         info_frame = Frame(self.frame)
         Label(
             info_frame,
@@ -24,11 +34,58 @@ class ControlContent(Content):
             font='Times 16 bold',
         )
         self.info.pack(side=LEFT)
-        info_frame.pack(pady=30)
+        info_frame.pack(pady=20)
 
-        self.pack_message()
-        self.frame.pack()
-        self.update_info()
+    def build_button_frame(self):
+        outer_frame = Frame(self.frame)
+        label_frame = Frame(outer_frame)
+        Label(label_frame, text='Fetch/Update', font='Times 18').pack()
+        label_frame.pack()
+
+        button_frame = Frame(outer_frame)
+        button_options = [
+            {
+                'row': 1,
+                'column': 1,
+                'text': 'race cards',
+                'command': self.on_race_card_pressed,
+            },
+            {
+                'row': 2,
+                'column': 1,
+                'text': 'race result',
+                'command': self.on_race_result_pressed,
+            },
+            {
+                'row': 2,
+                'column': 2,
+                'text': 'odds & pools',
+                'command': self.on_odds_pool_pressed,
+            },
+        ]
+
+        for option in button_options:
+            Button(button_frame,
+                   text=option['text'],
+                   font='Times 18 bold',
+                   width=13,
+                   borderwidth=3,
+                   command=option['command']) \
+                .grid(row=option['row'],
+                      column=option['column'],
+                      padx=30,
+                      pady=10)
+
+        date_wrapper = Frame(button_frame)
+        self.race_date = Dropdown(
+            date_wrapper,
+            Storage.get_race_dates(),
+            lambda e: None,
+            {},
+        )
+        date_wrapper.grid(row=1, column=2, padx=25, pady=15)
+        button_frame.pack(pady=20)
+        outer_frame.pack(pady=50)
 
     def update_info(self):
         race = Storage.get_race(Storage.get_race_dates()[0], 1)
@@ -39,7 +96,7 @@ class ControlContent(Content):
         race_date, race_time = datetime.date(race_time), datetime.time(race_time)
 
         if race_date < curr_date:
-            self.info.configure(text=f'Unknown (fetch it below)')
+            self.info.configure(text=f'Unknown (fetch race cards below)')
             return
 
         if race_date == curr_date:
@@ -55,3 +112,12 @@ class ControlContent(Content):
             time_part = f'{race_time.hour}:{race_time.minute}'
 
         self.info.configure(text=f'{race_venue}, {date_part}  @{time_part} pm')
+
+    def on_race_card_pressed(self):
+        pass
+
+    def on_race_result_pressed(self):
+        pass
+
+    def on_odds_pool_pressed(self):
+        pass

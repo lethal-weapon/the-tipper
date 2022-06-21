@@ -28,7 +28,11 @@ class Storage:
 
     @classmethod
     def get_race_dates(cls) -> [str]:
-        dates = [d[Race.RACE_DATE] for d in cls.data]
+        dates = []
+        for d in cls.data:
+            if d[Race.RACE_DATE] not in dates:
+                dates.append(d[Race.RACE_DATE])
+
         dates.sort(reverse=True)
         return dates
 
