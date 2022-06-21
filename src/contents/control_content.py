@@ -50,8 +50,8 @@ class ControlContent(Content):
             date_part = f'{race_date.strftime("%A")[:3]}  {race_date}'
 
         if race_time.hour > 12:
-            time_part = f'{race_time.hour % 12}:{race_time.minute} pm'
+            time_part = f'{race_time.hour % 12}:{race_time.minute}'
         else:
-            time_part = f'{race_time.hour}:{race_time.minute} pm'
+            time_part = f'{race_time.hour}:{race_time.minute}'
 
-        self.info.configure(text=f'{race_venue}, {date_part}  @{time_part}')
+        self.info.configure(text=f'{race_venue}, {date_part}  @{time_part} pm')
