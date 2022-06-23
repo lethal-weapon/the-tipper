@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Tk, Frame
 
 from src.ui.tab import Tab
 from src.contents.control_content import ControlContent

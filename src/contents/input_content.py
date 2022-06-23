@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Button
 from datetime import date
 
 from src.storage.storage import Storage

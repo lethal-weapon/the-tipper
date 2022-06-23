@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Frame, Label, Button, LEFT, RIGHT
 
 from src.ui.dropdown import Dropdown
 from src.utils.constants import Misc

@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Frame, Label, Entry, StringVar, CENTER
 
 from src.utils.constants import Color, Misc
 

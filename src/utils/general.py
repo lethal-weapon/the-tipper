@@ -4,7 +4,7 @@ from datetime import datetime, date, time
 from src.settings import SETTINGS
 
 
-def get_thread_name():
+def get_thread_name() -> str:
     return threading.current_thread().name
 
 

@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Frame, Label, Checkbutton, IntVar, LEFT
 
 from src.ui.dropdown import Dropdown
 from src.utils.tipster_sources import TIPSTER_SOURCES

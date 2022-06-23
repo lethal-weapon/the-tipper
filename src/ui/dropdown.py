@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import *
+from tkinter import OptionMenu, StringVar
 
 from src.utils.constants import Misc
 

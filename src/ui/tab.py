@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Canvas, LEFT
 
 from src.utils.constants import Widget, Style, Color
 

@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Frame, Label, RIGHT
 
 from src.utils.constants import Style, Color, MessageLevel
 

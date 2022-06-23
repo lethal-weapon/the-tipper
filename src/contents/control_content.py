@@ -1,11 +1,11 @@
-from tkinter import *
+from tkinter import Frame, Label, Button, LEFT
 from datetime import datetime, timedelta
 
+from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.storage import Storage
-from src.utils.constants import Race, MessageLevel
+from src.utils.constants import Race
 from src.utils.general import get_current_date_and_time
-from src.ui.dropdown import Dropdown
 
 
 class ControlContent(Content):
