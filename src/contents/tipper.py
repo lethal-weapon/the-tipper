@@ -18,7 +18,10 @@ class Tipper:
     def launch(cls):
         cls.window.title(SETTINGS.BASE.APP)
         cls.window.resizable(False, False)
-        cls.window.geometry(f'{Widget.WINDOW_WIDTH}x{Widget.WINDOW_HEIGHT}')
+        cls.window.geometry(
+            f'{Widget.WINDOW_WIDTH}x{Widget.WINDOW_HEIGHT}'
+            f'+{Widget.INITIAL_X}+{Widget.INITIAL_Y}'
+        )
 
         cls.create_tabs()
         cls.create_contents()
