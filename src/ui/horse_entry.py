@@ -11,25 +11,26 @@ class HorseEntry:
                  pady: int):
         frame = Frame(parent_widget)
 
-        label_style = 'Times 16 bold'
-        entry_style = 'Times 18'
-        self.entries = entries
-        self.numbers = []
+        label_style, entry_style = 'Times 16 bold', 'Times 18'
+        self.entries, self.numbers = entries, []
 
         for i in range(1, entries + 1):
             Label(frame, text=Misc.ORDINALS[i], font=label_style) \
                 .grid(row=1, column=i, padx=20, pady=5)
 
             number = StringVar()
-            Entry(frame,
-                  textvariable=number,
-                  font=entry_style,
-                  fg=Color.RED,
-                  width=5,
-                  borderwidth=5,
-                  justify=CENTER) \
-                .grid(row=2, column=i, padx=20, pady=5)
-
+            entry = Entry(
+                frame,
+                textvariable=number,
+                font=entry_style,
+                fg=Color.RED,
+                width=5,
+                borderwidth=5,
+                justify=CENTER,
+                validate='key',
+            )
+            entry.configure(vcmd=(entry.register(self.check_digit), '%d', '%P'))
+            entry.grid(row=2, column=i, padx=20, pady=5)
             self.numbers.append(number)
 
         frame.pack(pady=pady)
@@ -56,3 +57,11 @@ class HorseEntry:
     def clear(self):
         for number in self.numbers:
             number.set('')
+
+    @staticmethod
+    def check_digit(action_type: str, input_text: str):
+        # validate only on insertion
+        if action_type == '1':
+            return input_text.isdigit()
+
+        return True
