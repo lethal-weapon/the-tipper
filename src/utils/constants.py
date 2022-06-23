@@ -51,7 +51,6 @@ class Race:
     PRIZE = 'prize'
     VIDEO_URL = 'video_url'
     RESULT_URL = 'result_url'
-    UPDATED_AT = 'updated_at'
 
     TIPS = 'tips'
     ODDS = 'odds'

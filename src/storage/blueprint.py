@@ -12,7 +12,6 @@ BLUEPRINT = [
         'prize': 780000,
         'video_url': '',
         'result_url': '',
-        'updated_at': '2022-01-01T14:00:00.010026+08:00',
         'tips': [
             {
                 'source': 'HKJC',

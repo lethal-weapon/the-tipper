@@ -28,7 +28,7 @@ class InputContent(Content):
         self.horse_entry = HorseEntry(
             self.frame,
             4,
-            40
+            30
         )
         Button(self.frame,
                text='Save',
@@ -44,6 +44,10 @@ class InputContent(Content):
 
     def load(self):
         """ Loads tips from storage according to the UI state. """
+        if Storage.is_empty():
+            self.set_message(MessageLevel.INFO, 'No race found.')
+            return
+
         race_date, race_num = \
             self.race_picker.get_race_date_num()
         source, tipster, is_confident = \
@@ -74,6 +78,10 @@ class InputContent(Content):
 
     def save(self):
         """ Save tips into storage according to the UI state. """
+        if Storage.is_empty():
+            self.set_message(MessageLevel.ERROR, 'No race found.')
+            return
+
         race_date, race_num = \
             self.race_picker.get_race_date_num()
         source, tipster, is_confident = \

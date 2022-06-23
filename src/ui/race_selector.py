@@ -1,6 +1,7 @@
 from tkinter import *
 
 from src.ui.dropdown import Dropdown
+from src.utils.constants import Misc
 
 
 class RaceSelector:
@@ -45,7 +46,11 @@ class RaceSelector:
         return dates
 
     def get_race_nums(self) -> [str]:
-        races = self.races[self.race_date.get_selected_option()]
+        selected = self.race_date.get_selected_option()
+        if selected == Misc.NULL:
+            return []
+
+        races = self.races[selected]
         return [str(r) for r in range(1, races + 1)]
 
     def on_changed(self, *e):

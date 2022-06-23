@@ -1,6 +1,5 @@
 import json
 
-from src.storage.dummy import DUMMY
 from src.utils.constants import Race, Tip
 
 
@@ -9,22 +8,23 @@ class Storage:
 
     @classmethod
     def initialize(cls):
-        cls.data = DUMMY
-        # cls.print()
+        pass
 
     @classmethod
     def print(cls):
         print(json.dumps(cls.data, sort_keys=False, indent=4))
 
     @classmethod
-    def load_from_database(cls):
-        # TODO:
+    def read(cls):
         pass
 
     @classmethod
-    def save_to_database(cls):
-        # TODO:
+    def write(cls):
         pass
+
+    @classmethod
+    def is_empty(cls) -> bool:
+        return len(cls.data) == 0
 
     @classmethod
     def get_race_dates(cls) -> [str]:
@@ -85,4 +85,3 @@ class Storage:
             race[Race.TIPS].remove(stored)
 
         race[Race.TIPS].append(new_tip)
-        cls.print()

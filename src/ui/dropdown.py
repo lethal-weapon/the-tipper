@@ -14,10 +14,10 @@ class Dropdown:
         self.callback = callback
         self.options = [str(o) for o in options]
         self.selected = StringVar()
-        self.selected.set(Misc.NULL)
-        if len(self.options) > 0:
-            self.selected.set(self.options[0])
+        if len(self.options) == 0:
+            self.options = [Misc.NULL]
 
+        self.selected.set(self.options[0])
         self.dropdown = OptionMenu(
             parent_widget,
             self.selected,
@@ -28,14 +28,16 @@ class Dropdown:
 
     def set_options(self, new_options: list):
         self.options = [str(o) for o in new_options]
-        self.selected.set(Misc.NULL)
+        if len(self.options) == 0:
+            self.options = [Misc.NULL]
+
+        self.selected.set(self.options[0])
         self.dropdown['menu'].delete(0, 'end')
 
         for opt in self.options:
             self.dropdown['menu'].add_command(
                 label=opt, command=tk._setit(self.selected, opt, self.callback)
             )
-        self.selected.set(self.options[0])
 
     def get_selected_option(self):
         return self.selected.get()

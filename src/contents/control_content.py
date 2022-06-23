@@ -83,11 +83,16 @@ class ControlContent(Content):
             lambda e: None,
             {},
         )
-        date_wrapper.grid(row=1, column=2, padx=25, pady=15)
+        date_wrapper.grid(row=1, column=2, padx=30, pady=10)
         button_frame.pack(pady=20)
         outer_frame.pack(pady=50)
 
     def update_info(self):
+        error_msg = 'Unknown (fetch race cards below)'
+        if Storage.is_empty():
+            self.info.configure(text=error_msg)
+            return
+
         race = Storage.get_race(Storage.get_race_dates()[0], 1)
         race_time = datetime.fromisoformat(race[Race.TIME])
         race_venue = race[Race.VENUE]
@@ -96,7 +101,7 @@ class ControlContent(Content):
         race_date, race_time = datetime.date(race_time), datetime.time(race_time)
 
         if race_date < curr_date:
-            self.info.configure(text=f'Unknown (fetch race cards below)')
+            self.info.configure(text=error_msg)
             return
 
         if race_date == curr_date:
