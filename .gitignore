@@ -2,6 +2,7 @@
 settings.env
 
 .idea/
+data/
 temp/
 env/
 venv/

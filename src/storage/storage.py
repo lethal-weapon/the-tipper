@@ -1,6 +1,8 @@
+import os
 import json
 
 from src.utils.constants import Race, Tip
+from src.settings import STORAGE_DIR
 
 
 class Storage:
@@ -8,7 +10,7 @@ class Storage:
 
     @classmethod
     def initialize(cls):
-        pass
+        cls.read()
 
     @classmethod
     def print(cls):
@@ -16,11 +18,28 @@ class Storage:
 
     @classmethod
     def read(cls):
-        pass
+        for f in os.listdir(STORAGE_DIR):
+            path = f'{STORAGE_DIR}/{f}'
+            if not os.path.isfile(path):
+                continue
+            try:
+                with open(path, 'r') as infile:
+                    cls.data.extend(json.loads(infile.read()))
+            except Exception as ex:
+                print(f'Error while reading data from {path}: {ex}')
 
     @classmethod
-    def write(cls):
-        pass
+    def write(cls, race_date: str):
+        path = f'{STORAGE_DIR}/{race_date}.json'
+        matches = list(filter(
+            lambda d: d[Race.RACE_DATE] == race_date, cls.data
+        ))
+
+        try:
+            with open(path, 'w') as outfile:
+                outfile.write(json.dumps(matches))
+        except Exception as ex:
+            print(f'Error while writing data to {path}: {ex}')
 
     @classmethod
     def is_empty(cls) -> bool:
