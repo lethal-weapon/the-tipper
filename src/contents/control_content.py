@@ -116,6 +116,9 @@ class ControlContent(Content):
         else:
             time_part = f'{race_time.hour}:{race_time.minute}'
 
+        if time_part.endswith(':0'):
+            time_part += '0'
+
         self.info.configure(text=f'{race_venue}, {date_part}  @{time_part} pm')
 
     def on_race_card_pressed(self):

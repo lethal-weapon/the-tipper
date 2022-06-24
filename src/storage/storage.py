@@ -11,6 +11,7 @@ class Storage:
     @classmethod
     def initialize(cls):
         cls.read()
+        # cls.print()
 
     @classmethod
     def print(cls):
@@ -38,8 +39,25 @@ class Storage:
         try:
             with open(path, 'w') as outfile:
                 outfile.write(json.dumps(matches))
+            print(f'Meeting {race_date} with {len(matches)} races written')
         except Exception as ex:
             print(f'Error while writing data to {path}: {ex}')
+
+    @classmethod
+    def save_race(cls, new_race: dict):
+        stored = cls.get_race(new_race[Race.RACE_DATE], new_race[Race.RACE_NUM])
+        if stored:
+            for extra_field in [
+                Race.TIPS, Race.ODDS, Race.POOLS, Race.DIVIDENDS
+            ]:
+                if extra_field in stored:
+                    new_race[extra_field] = stored[extra_field]
+
+            cls.data.remove(stored)
+
+        cls.data.append(new_race)
+        print(f'Racecard '
+              f'<{new_race[Race.RACE_DATE]}, {new_race[Race.RACE_NUM]}> saved')
 
     @classmethod
     def is_empty(cls) -> bool:
