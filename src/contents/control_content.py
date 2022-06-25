@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.storage import Storage
-from src.utils.constants import Race
+from src.utils.constants import Race, State, MessageLevel
 from src.utils.general import get_current_date_and_time
+from src.robots.race_robot import RaceRobot
 
 
 class ControlContent(Content):
@@ -103,9 +104,8 @@ class ControlContent(Content):
         outer_frame.pack(pady=50)
 
     def update_info(self):
-        error_msg = 'Unknown (fetch race cards below)'
         if Storage.is_empty():
-            self.info.configure(text=error_msg)
+            self.info.configure(text=f'NO RACE FOUND!')
             return
 
         race = Storage.get_race(Storage.get_race_dates()[0], 1)
@@ -116,7 +116,7 @@ class ControlContent(Content):
         race_date, race_time = datetime.date(race_time), datetime.time(race_time)
 
         if race_date < curr_date:
-            self.info.configure(text=error_msg)
+            self.info.configure(text='Unknown (fetch race cards below)')
             return
 
         if race_date == curr_date:
@@ -136,11 +136,30 @@ class ControlContent(Content):
 
         self.info.configure(text=f'{race_venue}, {date_part}  @{time_part} pm')
 
+    def enable_ui(self):
+        self.race_date.enable()
+        for button in [self.btn_card, self.btn_result, self.btn_odds]:
+            button.configure(state=State.NORMAL)
+
+    def disable_ui(self):
+        self.race_date.disable()
+        for button in [self.btn_card, self.btn_result, self.btn_odds]:
+            button.configure(state=State.DISABLE)
+
     def on_race_card_pressed(self):
-        pass
+        self.disable_ui()
+        self.set_message(MessageLevel.INFO, 'Working on it...')
+
+        RaceRobot().run(self.set_message)
+
+        self.update_info()
+        self.race_date.set_options(Storage.get_race_dates())
+        self.enable_ui()
 
     def on_race_result_pressed(self):
-        pass
+        self.disable_ui()
+        self.set_message(MessageLevel.INFO, 'Working on it...')
 
     def on_odds_pool_pressed(self):
-        pass
+        self.disable_ui()
+        self.set_message(MessageLevel.INFO, 'Working on it...')

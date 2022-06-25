@@ -15,6 +15,11 @@ class Style:
     FG = 'fg'
 
 
+class State:
+    NORMAL = 'normal'
+    DISABLE = 'disable'
+
+
 class Color:
     NONE = ''
     RED = 'red'

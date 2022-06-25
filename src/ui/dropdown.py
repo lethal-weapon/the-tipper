@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import OptionMenu, StringVar
 
-from src.utils.constants import Misc
+from src.utils.constants import Misc, State
 
 
 class Dropdown:
@@ -69,3 +69,9 @@ class Dropdown:
     def is_last(self):
         curr = self.options.index(self.get_selected_option())
         return curr == len(self.options) - 1
+
+    def enable(self):
+        self.dropdown.configure(state=State.NORMAL)
+
+    def disable(self):
+        self.dropdown.configure(state=State.DISABLE)
