@@ -15,6 +15,11 @@ class ControlContent(Content):
 
         self.info = None
         self.race_date = None
+
+        self.btn_card = None
+        self.btn_odds = None
+        self.btn_result = None
+
         self.build_info_frame()
         self.build_button_frame()
         self.pack_message()
@@ -65,16 +70,26 @@ class ControlContent(Content):
         ]
 
         for option in button_options:
-            Button(button_frame,
-                   text=option['text'],
-                   font='Times 18 bold',
-                   width=13,
-                   borderwidth=3,
-                   command=option['command']) \
-                .grid(row=option['row'],
-                      column=option['column'],
-                      padx=30,
-                      pady=10)
+            button = Button(
+                button_frame,
+                text=option['text'],
+                font='Times 18 bold',
+                width=13,
+                borderwidth=3,
+                command=option['command']
+            )
+            button.grid(
+                row=option['row'],
+                column=option['column'],
+                padx=30,
+                pady=10,
+            )
+            if 'card' in option['text']:
+                self.btn_card = button
+            elif 'result' in option['text']:
+                self.btn_result = button
+            elif 'odds' in option['text']:
+                self.btn_odds = button
 
         date_wrapper = Frame(button_frame)
         self.race_date = Dropdown(
