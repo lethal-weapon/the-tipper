@@ -3,7 +3,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.utils.schema import *
-from src.utils.constants import Race, MessageLevel
+from src.utils.constants import Race
 from src.storage.storage import Storage
 from src.robots.robot import Robot, RESPONSE_TIMEOUT
 
@@ -16,7 +16,7 @@ XPATH_RACE_INFO_DIV = '//div[contains(@class, "margin_top10")]/div[contains(@cla
 
 class RaceRobot(Robot):
 
-    def run(self, progress_callback):
+    def run(self):
         browser, race_date = None, ''
         try:
             browser = self.get_browser()
@@ -32,27 +32,15 @@ class RaceRobot(Robot):
 
                     race_date = card[Race.RACE_DATE]
                     Storage.save_race(card)
-                    progress_callback(
-                        MessageLevel.INFO,
-                        f'Working on meeting: {race_date} , Completed: '
-                        f'{race_urls.index(url) + 1} / {len(race_urls)}'
-                    )
                 except:
-                    progress_callback(
-                        MessageLevel.ERROR,
-                        f'Error while getting racecard with url: {url}'
-                    )
+                    pass
         except:
-            progress_callback(
-                MessageLevel.ERROR,
-                'Error while starting browser or getting race urls.'
-            )
+            pass
         finally:
             if browser:
                 browser.quit()
             if check_race_date(race_date):
                 Storage.write(race_date)
-                progress_callback(MessageLevel.SUCCESS, 'Done.')
 
     @staticmethod
     def get_race_urls(browser) -> [str]:

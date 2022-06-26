@@ -1,3 +1,4 @@
+from threading import Thread
 from tkinter import Frame, Label, Button, LEFT
 from datetime import datetime, timedelta
 
@@ -20,6 +21,8 @@ class ControlContent(Content):
         self.btn_card = None
         self.btn_odds = None
         self.btn_result = None
+
+        self.worker = None
 
         self.build_info_frame()
         self.build_button_frame()
@@ -150,11 +153,10 @@ class ControlContent(Content):
         self.disable_ui()
         self.set_message(MessageLevel.INFO, 'Working on it...')
 
-        RaceRobot().run(self.set_message)
-
-        self.update_info()
-        self.race_date.set_options(Storage.get_race_dates())
-        self.enable_ui()
+        bot = RaceRobot()
+        self.worker = Thread(target=bot.run)
+        self.worker.start()
+        self.frame.after(250, self.check_race_card_worker)
 
     def on_race_result_pressed(self):
         self.disable_ui()
@@ -163,3 +165,12 @@ class ControlContent(Content):
     def on_odds_pool_pressed(self):
         self.disable_ui()
         self.set_message(MessageLevel.INFO, 'Working on it...')
+
+    def check_race_card_worker(self):
+        if self.worker.is_alive():
+            self.frame.after(250, self.check_race_card_worker)
+        else:
+            self.update_info()
+            self.race_date.set_options(Storage.get_race_dates())
+            self.enable_ui()
+            self.set_message(MessageLevel.SUCCESS, 'Done.')
