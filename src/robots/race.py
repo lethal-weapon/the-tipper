@@ -6,6 +6,7 @@ from src.utils.schema import *
 from src.utils.constants import Race
 from src.storage.storage import Storage
 from src.robots.robot import Robot, RESPONSE_TIMEOUT
+from src.robots.result import URL_RESULT_DETAIL, URL_RACE_VIDEO
 
 URL_RACE_CARD = 'https://racing.hkjc.com/racing/information/English/racing/RaceCard.aspx'
 
@@ -92,6 +93,15 @@ class RaceRobot(Robot):
             Race.RACE_DATE: race_date,
             Race.RACE_NUM: race_num,
             Race.VENUE: venue_code,
+            Race.VIDEO_URL: URL_RACE_VIDEO.format(
+                race_date.replace('-', ''),
+                f'0{race_num}' if int(race_num) < 10 else race_num
+            ),
+            Race.RESULT_URL: URL_RESULT_DETAIL.format(
+                race_date.replace('-', '/'),
+                venue_code,
+                race_num
+            ),
         }
 
         try:

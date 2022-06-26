@@ -14,6 +14,8 @@ RACE_INFO_SCHEMA = {
     Race.TRACK: to_str,
     Race.COURSE: to_str,
     Race.PRIZE: to_int,
+    Race.VIDEO_URL: to_str,
+    Race.RESULT_URL: to_str,
 }
 
 RACE_INFO_VALIDATION_SCHEMA = {
@@ -26,4 +28,6 @@ RACE_INFO_VALIDATION_SCHEMA = {
     Race.DISTANCE: check_positive_int,
     Race.TRACK: check_str,
     Race.PRIZE: check_positive_int,
+    Race.VIDEO_URL: check_str,
+    Race.RESULT_URL: check_str,
 }

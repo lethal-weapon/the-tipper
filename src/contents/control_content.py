@@ -1,13 +1,13 @@
 from threading import Thread
-from tkinter import Frame, Label, Button, LEFT
 from datetime import datetime, timedelta
+from tkinter import Frame, Label, Button, LEFT
 
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.storage import Storage
 from src.utils.constants import Race, State, MessageLevel
 from src.utils.general import get_current_date_and_time
-from src.robots.race_robot import RaceRobot
+from src.robots.race import RaceRobot
 
 
 class ControlContent(Content):
@@ -143,34 +143,31 @@ class ControlContent(Content):
         self.race_date.enable()
         for button in [self.btn_card, self.btn_result, self.btn_odds]:
             button.configure(state=State.NORMAL)
+        self.set_message(MessageLevel.SUCCESS, 'Done.')
 
     def disable_ui(self):
         self.race_date.disable()
         for button in [self.btn_card, self.btn_result, self.btn_odds]:
             button.configure(state=State.DISABLE)
+        self.set_message(MessageLevel.INFO, 'Working on it...')
 
     def on_race_card_pressed(self):
         self.disable_ui()
-        self.set_message(MessageLevel.INFO, 'Working on it...')
-
         bot = RaceRobot()
         self.worker = Thread(target=bot.run)
         self.worker.start()
-        self.frame.after(250, self.check_race_card_worker)
+        self.frame.after(250, self.check_worker)
 
     def on_race_result_pressed(self):
         self.disable_ui()
-        self.set_message(MessageLevel.INFO, 'Working on it...')
 
     def on_odds_pool_pressed(self):
         self.disable_ui()
-        self.set_message(MessageLevel.INFO, 'Working on it...')
 
-    def check_race_card_worker(self):
+    def check_worker(self):
         if self.worker.is_alive():
-            self.frame.after(250, self.check_race_card_worker)
+            self.frame.after(250, self.check_worker)
         else:
             self.update_info()
             self.race_date.set_options(Storage.get_race_dates())
             self.enable_ui()
-            self.set_message(MessageLevel.SUCCESS, 'Done.')
