@@ -63,7 +63,9 @@ class Race:
     TIPS = 'tips'
     ODDS = 'odds'
     POOLS = 'pools'
+    DIVIDEND = 'dividend'
     DIVIDENDS = 'dividends'
+    COMBINATION = 'combination'
 
 
 class Tip:
@@ -89,3 +91,31 @@ class Pool:
     QIN_QPL = 'QIN_QPL '
     FCT_TRI = 'FCT_TRI'
     QTT_F_F = 'QTT_F-F'
+
+
+POOL_MAPPER = {
+    'WIN': Pool.WIN,
+    'PLACE': Pool.PLA,
+    'QUINELLA': Pool.QIN,
+    'QUINELLA PLACE': Pool.QPL,
+    'FORECAST': Pool.FCT,
+    'TRIO': Pool.TRI,
+    'TIERCE': Pool.TCE,
+    'FIRST 4': Pool.F_F,
+    'QUARTET': Pool.QTT,
+}
+
+SINGLE_HORSE_POOLS = [
+    'WIN',
+    'PLACE',
+]
+
+MULTIPLE_HORSE_POOLS = [
+    'QUINELLA',
+    'QUINELLA PLACE',
+    'FORECAST',
+    'TRIO',
+    'TIERCE',
+    'FIRST 4',
+    'QUARTET',
+]

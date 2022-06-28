@@ -6,9 +6,15 @@ from src.utils.schema import *
 from src.utils.constants import Race
 from src.storage.storage import Storage
 from src.robots.robot import Robot, RESPONSE_TIMEOUT
-from src.robots.result import URL_RESULT_DETAIL, URL_RACE_VIDEO
 
-URL_RACE_CARD = 'https://racing.hkjc.com/racing/information/English/racing/RaceCard.aspx'
+URL_RACE_CARD = \
+    'https://racing.hkjc.com/racing/information/English/racing/RaceCard.aspx'
+URL_RACE_VIDEO = \
+    'https://racing.hkjc.com/racing/video/play.asp' \
+    '?type=replay-full&date={}&no={}&lang=eng'
+URL_RACE_RESULT = \
+    'https://racing.hkjc.com/racing/information/English/Racing/LocalResults.aspx' \
+    '?RaceDate={}&Racecourse={}&RaceNo={}'
 
 XPATH_RACE_NUM_ROW = '//div[contains(@class, "racingNum")]/table/tbody/tr[1]'
 XPATH_GEAR_DETAIL_DIV = '//div[contains(@class, "Gear")]'
@@ -97,7 +103,7 @@ class RaceRobot(Robot):
                 race_date.replace('-', ''),
                 f'0{race_num}' if int(race_num) < 10 else race_num
             ),
-            Race.RESULT_URL: URL_RESULT_DETAIL.format(
+            Race.RESULT_URL: URL_RACE_RESULT.format(
                 race_date.replace('-', '/'),
                 venue_code,
                 race_num

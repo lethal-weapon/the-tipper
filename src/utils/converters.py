@@ -48,3 +48,15 @@ def to_race_date_num_venue(url: str) -> (str, str, str):
         url[url.rfind('=') + 1:],
         re.search(r'=(ST|HV)', url).group().replace('=', '')
     )
+
+
+def to_odds(dividend: str) -> float:
+    # convert $10 dividend to the actual odds
+    # e.g. '15.50'           -> 1.55
+    # e.g. '1,140.00'        -> 114.00
+    # e.g. '564,887.50/$1.0' -> 564887.50
+    temp = dividend.replace(',', '')
+    if '/$1.0' not in temp:
+        return round(float(temp) / 10, 2)
+    else:
+        return round(float(temp.replace('/$1.0', '')), 2)

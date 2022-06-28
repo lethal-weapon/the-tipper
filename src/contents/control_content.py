@@ -8,6 +8,7 @@ from src.storage.storage import Storage
 from src.utils.constants import Race, State, MessageLevel
 from src.utils.general import get_current_date_and_time
 from src.robots.race import RaceRobot
+from src.robots.dividend import DividendRobot
 
 
 class ControlContent(Content):
@@ -20,7 +21,7 @@ class ControlContent(Content):
 
         self.btn_card = None
         self.btn_odds = None
-        self.btn_result = None
+        self.btn_dividend = None
 
         self.worker = None
 
@@ -62,8 +63,8 @@ class ControlContent(Content):
             {
                 'row': 2,
                 'column': 1,
-                'text': 'race result',
-                'command': self.on_race_result_pressed,
+                'text': 'race dividends',
+                'command': self.on_race_dividend_pressed,
             },
             {
                 'row': 2,
@@ -90,8 +91,8 @@ class ControlContent(Content):
             )
             if 'card' in option['text']:
                 self.btn_card = button
-            elif 'result' in option['text']:
-                self.btn_result = button
+            elif 'dividend' in option['text']:
+                self.btn_dividend = button
             elif 'odds' in option['text']:
                 self.btn_odds = button
 
@@ -141,13 +142,13 @@ class ControlContent(Content):
 
     def enable_ui(self):
         self.race_date.enable()
-        for button in [self.btn_card, self.btn_result, self.btn_odds]:
+        for button in [self.btn_card, self.btn_dividend, self.btn_odds]:
             button.configure(state=State.NORMAL)
         self.set_message(MessageLevel.SUCCESS, 'Done.')
 
     def disable_ui(self):
         self.race_date.disable()
-        for button in [self.btn_card, self.btn_result, self.btn_odds]:
+        for button in [self.btn_card, self.btn_dividend, self.btn_odds]:
             button.configure(state=State.DISABLE)
         self.set_message(MessageLevel.INFO, 'Working on it...')
 
@@ -158,8 +159,15 @@ class ControlContent(Content):
         self.worker.start()
         self.frame.after(250, self.check_worker)
 
-    def on_race_result_pressed(self):
+    def on_race_dividend_pressed(self):
         self.disable_ui()
+        bot = DividendRobot()
+        self.worker = Thread(
+            target=bot.run,
+            kwargs={Race.RACE_DATE: self.race_date.get_selected_option()}
+        )
+        self.worker.start()
+        self.frame.after(250, self.check_worker)
 
     def on_odds_pool_pressed(self):
         self.disable_ui()

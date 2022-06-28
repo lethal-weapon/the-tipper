@@ -61,6 +61,20 @@ class Storage:
         print(f'Racecard <{new_date}, {new_num}> saved')
 
     @classmethod
+    def save_dividends(
+        cls,
+        race_date: str,
+        race_num: int,
+        dividends: dict
+    ):
+        stored = cls.get_race(race_date, race_num)
+        if stored:
+            stored[Race.DIVIDENDS] = dividends
+            print(f'Dividend <{race_date}, {race_num}> saved')
+        else:
+            print(f'Racecard <{race_date}, {race_num}> does not exist')
+
+    @classmethod
     def is_empty(cls) -> bool:
         return len(cls.data) == 0
 
