@@ -20,8 +20,9 @@ class ControlContent(Content):
         self.race_date = None
 
         self.btn_card = None
-        self.btn_odds = None
         self.btn_dividend = None
+        self.btn_odds_start = None
+        self.btn_odds_stop = None
 
         self.worker = None
 
@@ -47,30 +48,38 @@ class ControlContent(Content):
         info_frame.pack(pady=20)
 
     def build_button_frame(self):
-        outer_frame = Frame(self.frame)
-        label_frame = Frame(outer_frame)
-        Label(label_frame, text='Fetch/Update', font='Times 18').pack()
-        label_frame.pack()
+        button_frame = Frame(self.frame)
+        for i in range(1, 4):
+            Label(button_frame, text=f'{i}.', font='Times 18') \
+                .grid(row=i, column=1, padx=20, pady=15)
+            if i == 3:
+                Label(button_frame, text='Odds & Pools', font='Times 20 bold') \
+                    .grid(row=i, column=2, padx=20, pady=15)
 
-        button_frame = Frame(outer_frame)
         button_options = [
             {
                 'row': 1,
-                'column': 1,
-                'text': 'race cards',
-                'command': self.on_race_card_pressed,
-            },
-            {
-                'row': 2,
-                'column': 1,
-                'text': 'race dividends',
-                'command': self.on_race_dividend_pressed,
+                'column': 2,
+                'text': 'Fetch racecards',
+                'command': self.on_race_card_fetched,
             },
             {
                 'row': 2,
                 'column': 2,
-                'text': 'odds & pools',
-                'command': self.on_odds_pool_pressed,
+                'text': 'Fetch dividends',
+                'command': self.on_dividend_fetched,
+            },
+            {
+                'row': 3,
+                'column': 3,
+                'text': 'Start',
+                'command': self.on_odds_started,
+            },
+            {
+                'row': 3,
+                'column': 4,
+                'text': 'Stop',
+                'command': self.on_odds_stopped,
             },
         ]
 
@@ -79,22 +88,25 @@ class ControlContent(Content):
                 button_frame,
                 text=option['text'],
                 font='Times 18 bold',
-                width=13,
+                width=6 if option['row'] > 2 else 15,
                 borderwidth=3,
                 command=option['command']
             )
             button.grid(
                 row=option['row'],
                 column=option['column'],
-                padx=30,
-                pady=10,
+                padx=20,
+                pady=15,
             )
-            if 'card' in option['text']:
+            if option['row'] == 1:
                 self.btn_card = button
-            elif 'dividend' in option['text']:
+            elif option['row'] == 2:
                 self.btn_dividend = button
-            elif 'odds' in option['text']:
-                self.btn_odds = button
+            elif 'Start' in option['text']:
+                self.btn_odds_start = button
+            elif 'Stop' in option['text']:
+                self.btn_odds_stop = button
+                self.btn_odds_stop.configure(state=State.DISABLE)
 
         date_wrapper = Frame(button_frame)
         self.race_date = Dropdown(
@@ -103,9 +115,8 @@ class ControlContent(Content):
             lambda e: None,
             {},
         )
-        date_wrapper.grid(row=1, column=2, padx=30, pady=10)
-        button_frame.pack(pady=20)
-        outer_frame.pack(pady=50)
+        date_wrapper.grid(row=2, column=3, padx=20, pady=15)
+        button_frame.pack(pady=40)
 
     def update_info(self):
         if Storage.is_empty():
@@ -142,24 +153,28 @@ class ControlContent(Content):
 
     def enable_ui(self):
         self.race_date.enable()
-        for button in [self.btn_card, self.btn_dividend, self.btn_odds]:
+        for button in [
+            self.btn_card, self.btn_dividend, self.btn_odds_start, self.btn_odds_stop
+        ]:
             button.configure(state=State.NORMAL)
         self.set_message(MessageLevel.SUCCESS, 'Done.')
 
     def disable_ui(self):
         self.race_date.disable()
-        for button in [self.btn_card, self.btn_dividend, self.btn_odds]:
+        for button in [
+            self.btn_card, self.btn_dividend, self.btn_odds_start, self.btn_odds_stop
+        ]:
             button.configure(state=State.DISABLE)
         self.set_message(MessageLevel.INFO, 'Working on it...')
 
-    def on_race_card_pressed(self):
+    def on_race_card_fetched(self):
         self.disable_ui()
         bot = RaceRobot()
         self.worker = Thread(target=bot.run)
         self.worker.start()
         self.frame.after(250, self.check_worker)
 
-    def on_race_dividend_pressed(self):
+    def on_dividend_fetched(self):
         selected_date = self.race_date.get_selected_option()
         first_race_time = \
             datetime.fromisoformat(Storage.get_race(selected_date, 1)[Race.TIME])
@@ -180,9 +195,6 @@ class ControlContent(Content):
         self.worker.start()
         self.frame.after(250, self.check_worker)
 
-    def on_odds_pool_pressed(self):
-        self.disable_ui()
-
     def check_worker(self):
         if self.worker.is_alive():
             self.frame.after(250, self.check_worker)
@@ -190,3 +202,11 @@ class ControlContent(Content):
             self.update_info()
             self.race_date.set_options(Storage.get_race_dates())
             self.enable_ui()
+
+    def on_odds_started(self):
+        self.disable_ui()
+        self.btn_odds_stop.configure(state=State.NORMAL)
+
+    def on_odds_stopped(self):
+        self.enable_ui()
+        self.btn_odds_stop.configure(state=State.DISABLE)
