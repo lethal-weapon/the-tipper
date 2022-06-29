@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from src.utils.schema import *
 from src.utils.constants import Race
 from src.storage.storage import Storage
-from src.robots.robot import Robot, RESPONSE_TIMEOUT
+from src.robots.ui import UIRobot, RESPONSE_TIMEOUT
 
 URL_RACE_CARD = \
     'https://racing.hkjc.com/racing/information/English/racing/RaceCard.aspx'
@@ -21,7 +21,7 @@ XPATH_GEAR_DETAIL_DIV = '//div[contains(@class, "Gear")]'
 XPATH_RACE_INFO_DIV = '//div[contains(@class, "margin_top10")]/div[contains(@class, "f_fs13")]'
 
 
-class RaceRobot(Robot):
+class RaceRobot(UIRobot):
 
     def run(self):
         browser, race_date = None, ''

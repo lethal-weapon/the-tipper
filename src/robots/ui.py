@@ -7,7 +7,7 @@ MAX_RETRY_COUNT = 3
 RESPONSE_TIMEOUT = 30
 
 
-class Robot(ABC):
+class UIRobot(ABC):
 
     def get_browser(self):
         retry_count = 0

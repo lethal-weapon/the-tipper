@@ -3,7 +3,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.storage.storage import Storage
-from src.robots.robot import Robot, RESPONSE_TIMEOUT
+from src.robots.ui import UIRobot, RESPONSE_TIMEOUT
 from src.utils.schema import *
 from src.utils.constants import \
     Race, POOL_MAPPER, SINGLE_HORSE_POOLS, MULTIPLE_HORSE_POOLS
@@ -15,7 +15,7 @@ URL_DIVIDENDS = \
 XPATH_RESULT_DIV = '//div[contains(@class, "race_result")]'
 
 
-class DividendRobot(Robot):
+class DividendRobot(UIRobot):
 
     def run(self, race_date: str):
         url = URL_DIVIDENDS.format(race_date.replace('-', '/'))

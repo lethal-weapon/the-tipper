@@ -88,9 +88,6 @@ class Pool:
     DBL = 'DBL'
 
     WIN_PLA = 'WIN_PLA'
-    QIN_QPL = 'QIN_QPL '
-    FCT_TRI = 'FCT_TRI'
-    QTT_F_F = 'QTT_F-F'
 
 
 POOL_MAPPER = {

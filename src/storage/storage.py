@@ -75,6 +75,35 @@ class Storage:
             print(f'Racecard <{race_date}, {race_num}> does not exist')
 
     @classmethod
+    def save_odds(
+        cls,
+        race_date: str,
+        race_num: int,
+        odds_type: str,
+        odds_value: dict
+    ):
+        stored = cls.get_race(race_date, race_num)
+        if stored:
+            stored[Race.ODDS][odds_type] = odds_value
+            print(f'{odds_type} <{race_date}, {race_num}> saved')
+        else:
+            print(f'Racecard <{race_date}, {race_num}> does not exist')
+
+    @classmethod
+    def save_pools(
+        cls,
+        race_date: str,
+        race_num: int,
+        pools: dict
+    ):
+        stored = cls.get_race(race_date, race_num)
+        if stored:
+            stored[Race.POOLS] = pools
+            print(f'Pool <{race_date}, {race_num}> saved')
+        else:
+            print(f'Racecard <{race_date}, {race_num}> does not exist')
+
+    @classmethod
     def is_empty(cls) -> bool:
         return len(cls.data) == 0
 
