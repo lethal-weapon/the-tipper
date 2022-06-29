@@ -5,10 +5,10 @@ from tkinter import Frame, Label, Button, LEFT
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.storage import Storage
-from src.utils.constants import Race, State, MessageLevel
-from src.utils.general import get_current_date_and_time
 from src.robots.race import RaceRobot
 from src.robots.dividend import DividendRobot
+from src.utils.constants import Race, State, MessageLevel
+from src.utils.general import get_now, get_current_date_and_time
 
 
 class ControlContent(Content):
@@ -160,11 +160,22 @@ class ControlContent(Content):
         self.frame.after(250, self.check_worker)
 
     def on_race_dividend_pressed(self):
+        selected_date = self.race_date.get_selected_option()
+        first_race_time = \
+            datetime.fromisoformat(Storage.get_race(selected_date, 1)[Race.TIME])
+
+        if get_now() <= first_race_time:
+            self.set_message(
+                MessageLevel.INFO,
+                f'Meeting {selected_date} has not yet started.'
+            )
+            return
+
         self.disable_ui()
         bot = DividendRobot()
         self.worker = Thread(
             target=bot.run,
-            kwargs={Race.RACE_DATE: self.race_date.get_selected_option()}
+            kwargs={Race.RACE_DATE: selected_date}
         )
         self.worker.start()
         self.frame.after(250, self.check_worker)
