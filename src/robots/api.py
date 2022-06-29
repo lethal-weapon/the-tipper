@@ -21,7 +21,7 @@ class APIRobot(ABC):
                 Storage.save_odds(
                     race_date,
                     int(race_num),
-                    self.get_odds_type(),
+                    self.get_storage_odds_type(),
                     self.fetch(url)
                 )
             else:
@@ -37,7 +37,7 @@ class APIRobot(ABC):
         return self.__class__.__name__.replace('Robot', '')
 
     @abstractmethod
-    def get_odds_type(self) -> str:
+    def get_storage_odds_type(self) -> str:
         pass
 
     @abstractmethod

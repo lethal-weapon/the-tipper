@@ -8,7 +8,7 @@ URL_PARAMS = 'type=pooltot&date={}&venue={}&raceno={}'
 
 class PoolRobot(APIRobot):
 
-    def get_odds_type(self) -> str:
+    def get_storage_odds_type(self) -> str:
         return Race.POOLS
 
     def build_request_url(
