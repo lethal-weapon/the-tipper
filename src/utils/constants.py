@@ -1,3 +1,6 @@
+from datetime import time, timedelta
+
+
 class Widget:
     WINDOW_WIDTH = 900
     WINDOW_HEIGHT = WINDOW_WIDTH * 5 // 8
@@ -44,6 +47,14 @@ class Misc:
         4: '4th',
         5: '5th',
     }
+
+
+class Time:
+    ONE_DAY = timedelta(days=1)
+    ONE_HOUR = timedelta(hours=1)
+    TWO_HOURS = timedelta(hours=2)
+    ONE_PM = time(hour=13)
+    ODDS_FREQUENCY = 6
 
 
 class Race:

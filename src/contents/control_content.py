@@ -7,6 +7,7 @@ from src.contents.content import Content
 from src.storage.storage import Storage
 from src.robots.race import RaceRobot
 from src.robots.dividend import DividendRobot
+from src.robots.manager import RobotManager
 from src.utils.constants import Race, State, MessageLevel
 from src.utils.general import get_now, get_current_date_and_time
 
@@ -128,7 +129,7 @@ class ControlContent(Content):
             self.info.configure(text=f'NO RACE FOUND!')
             return
 
-        race = Storage.get_race(Storage.get_race_dates()[0], 1)
+        race = Storage.get_race(Storage.get_most_recent_race_date(), 1)
         race_time = datetime.fromisoformat(race[Race.TIME])
         race_venue = race[Race.VENUE]
 
@@ -216,9 +217,35 @@ class ControlContent(Content):
             self.enable_ui()
 
     def on_odds_started(self):
+        race_date = Storage.get_most_recent_race_date()
+        if not RobotManager.has_pool_opened(race_date):
+            self.set_message(
+                MessageLevel.INFO,
+                f'Pool {race_date} has not yet opened.'
+            )
+            return
+
         self.disable_ui()
-        self.btn_odds_stop.configure(state=State.NORMAL)
+        self.worker = Thread(
+            name=f'Thread <{race_date}>',
+            target=RobotManager.work,
+            kwargs={'race_date_to_work': race_date}
+        )
+        self.worker.start()
+        self.frame.after(250, self.check_odds_worker_started)
+
+    def check_odds_worker_started(self):
+        if self.worker.is_alive():
+            self.btn_odds_stop.configure(state=State.NORMAL)
+        else:
+            self.frame.after(250, self.check_odds_worker_started)
 
     def on_odds_stopped(self):
-        self.enable_ui()
-        self.btn_odds_stop.configure(state=State.DISABLE)
+        self.disable_ui()
+
+        if self.worker.is_alive():
+            RobotManager.stop()
+            self.frame.after(250, self.on_odds_stopped)
+        else:
+            self.enable_ui()
+            self.btn_odds_stop.configure(state=State.DISABLE)

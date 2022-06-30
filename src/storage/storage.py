@@ -1,8 +1,9 @@
 import os
 import json
 
-from src.utils.constants import Race, Tip
 from src.settings import STORAGE_DIR
+from src.utils.constants import Race, Tip
+from src.utils.general import get_now
 
 
 class Storage:
@@ -38,7 +39,7 @@ class Storage:
         try:
             with open(path, 'w') as outfile:
                 outfile.write(json.dumps(matches))
-            print(f'Meeting {race_date} saved')
+            print(f'Meeting {race_date} saved @ {get_now()}')
         except Exception as ex:
             print(f'Error while writing data to {path}: {ex}')
 
@@ -106,6 +107,10 @@ class Storage:
     @classmethod
     def is_empty(cls) -> bool:
         return len(cls.data) == 0
+
+    @classmethod
+    def get_most_recent_race_date(cls) -> str:
+        return cls.get_race_dates()[0]
 
     @classmethod
     def get_race_dates(cls) -> [str]:
