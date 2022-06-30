@@ -13,8 +13,13 @@ from src.utils.general import get_now, get_current_date_and_time
 
 class ControlContent(Content):
 
-    def __init__(self, parent_widget):
+    def __init__(
+        self,
+        parent_widget,
+        recreate_input_content
+    ):
         super().__init__(parent_widget)
+        self.recreate_input_content = recreate_input_content
 
         self.info = None
         self.race_date = None
@@ -172,7 +177,16 @@ class ControlContent(Content):
         bot = RaceRobot()
         self.worker = Thread(target=bot.run)
         self.worker.start()
-        self.frame.after(250, self.check_worker)
+        self.frame.after(250, self.check_race_card_worker)
+
+    def check_race_card_worker(self):
+        if self.worker.is_alive():
+            self.frame.after(250, self.check_race_card_worker)
+        else:
+            self.update_info()
+            self.race_date.set_options(Storage.get_race_dates())
+            self.enable_ui()
+            self.recreate_input_content()
 
     def on_dividend_fetched(self):
         selected_date = self.race_date.get_selected_option()
@@ -193,14 +207,12 @@ class ControlContent(Content):
             kwargs={Race.RACE_DATE: selected_date}
         )
         self.worker.start()
-        self.frame.after(250, self.check_worker)
+        self.frame.after(250, self.check_dividend_worker)
 
-    def check_worker(self):
+    def check_dividend_worker(self):
         if self.worker.is_alive():
-            self.frame.after(250, self.check_worker)
+            self.frame.after(250, self.check_dividend_worker)
         else:
-            self.update_info()
-            self.race_date.set_options(Storage.get_race_dates())
             self.enable_ui()
 
     def on_odds_started(self):

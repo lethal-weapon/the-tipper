@@ -49,7 +49,7 @@ class Tipper:
         portfolios = Frame(cls.window)
         performance = Frame(cls.window)
 
-        ControlContent(controls)
+        ControlContent(controls, cls.recreate_input_content)
         InputContent(inputs)
         PortfolioContent(portfolios)
         PerformanceContent(performance)
@@ -65,3 +65,12 @@ class Tipper:
                 cls.contents[i].pack_forget()
             else:
                 cls.contents[i].pack()
+
+    @classmethod
+    def recreate_input_content(cls):
+        cls.contents[1].pack_forget()
+        cls.contents[1].destroy()
+
+        new_input_frame = Frame(cls.window)
+        InputContent(new_input_frame)
+        cls.contents[1] = new_input_frame
