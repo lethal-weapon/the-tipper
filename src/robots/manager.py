@@ -25,13 +25,15 @@ class RobotManager:
     ]
 
     @classmethod
-    def has_pool_opened(cls, race_date_to_check: str):
+    def can_work_on(cls, race_date_to_check: str) -> bool:
         race_date = date.fromisoformat(race_date_to_check)
-        bet_date = race_date - Time.ONE_DAY
+        next_date = race_date + Time.ONE_DAY
+        pre_selling_date = race_date - Time.ONE_DAY
         curr_date, curr_time = get_current_date_and_time()
 
-        if (curr_date >= race_date) or \
-            (curr_date >= bet_date and curr_time >= Time.ONE_PM):
+        if (curr_date == race_date) or \
+            (curr_date == pre_selling_date and curr_time >= Time.ONE_PM) or \
+            (curr_date == next_date and curr_time <= Time.SIX_AM):
             return True
 
         return False
@@ -58,13 +60,13 @@ class RobotManager:
                     race[Race.RACE_DATE], race[Race.RACE_NUM], \
                     race[Race.TIME], race[Race.VENUE]
 
-                now = get_now()
-                begin_time = datetime.fromisoformat(race_time)
-
-                # no need to make the call if too early or too late
-                if (begin_time - now > Time.TWO_HOURS) or \
-                    (now - begin_time > Time.ONE_HOUR):
-                    continue
+                # now = get_now()
+                # begin_time = datetime.fromisoformat(race_time)
+                #
+                # no need to make the calls if too early or too late
+                # if (begin_time - now > Time.TWO_HOURS) or \
+                #     (now - begin_time > Time.ONE_HOUR):
+                #     continue
 
                 for robot in cls.robots:
                     robot.run(race_date, str(race_num), venue_code)

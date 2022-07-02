@@ -53,8 +53,9 @@ class Time:
     ONE_DAY = timedelta(days=1)
     ONE_HOUR = timedelta(hours=1)
     TWO_HOURS = timedelta(hours=2)
+    SIX_AM = time(hour=6)
     ONE_PM = time(hour=13)
-    ODDS_FREQUENCY = 6
+    ODDS_FREQUENCY = 7
 
 
 class Race:

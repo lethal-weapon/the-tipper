@@ -160,7 +160,7 @@ class ControlContent(Content):
     def enable_ui(self):
         self.race_date.enable()
         for button in [
-            self.btn_card, self.btn_dividend, self.btn_odds_start, self.btn_odds_stop
+            self.btn_card, self.btn_dividend, self.btn_odds_start
         ]:
             button.configure(state=State.NORMAL)
         self.set_message(MessageLevel.SUCCESS, 'Done.')
@@ -218,10 +218,10 @@ class ControlContent(Content):
 
     def on_odds_started(self):
         race_date = Storage.get_most_recent_race_date()
-        if not RobotManager.has_pool_opened(race_date):
+        if not RobotManager.can_work_on(race_date):
             self.set_message(
                 MessageLevel.INFO,
-                f'Pool {race_date} has not yet opened.'
+                f'Can not work on the meeting {race_date} right now.'
             )
             return
 
