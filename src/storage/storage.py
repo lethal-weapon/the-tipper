@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Optional
 
 from src.settings import STORAGE_DIR
 from src.utils.constants import Race, Tip
@@ -138,6 +139,20 @@ class Storage:
             return matches[0]
 
     @classmethod
+    def get_race_date_and_num_count(cls, n: Optional[int] = 3) -> dict:
+        """
+        Return up to the most recent n race days
+        and the total races for each one of them.
+        """
+        races = {d: 0 for d in cls.get_race_dates()[:n]}
+
+        for (race_date, race_num) in cls.get_race_tuples():
+            if race_date in races and race_num > races[race_date]:
+                races[race_date] = race_num
+
+        return races
+
+    @classmethod
     def get_tip(
         cls,
         race_date: str,
@@ -171,3 +186,4 @@ class Storage:
             race[Race.TIPS].remove(stored)
 
         race[Race.TIPS].append(new_tip)
+        cls.write(race_date)

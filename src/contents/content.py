@@ -8,7 +8,7 @@ class Content:
     def __init__(self, parent_widget):
         self.frame = Frame(parent_widget)
         self.message = Label(self.frame, font='Times 12')
-        self.set_message(MessageLevel.INFO, 'Good Day, Sir!')
+        self.set_message(MessageLevel.INFO, 'Good Day & Good Luck!')
 
     def pack_message(self):
         self.message.pack(side=RIGHT)

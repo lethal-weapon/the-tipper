@@ -1,5 +1,4 @@
 from tkinter import Button
-from datetime import date
 
 from src.storage.storage import Storage
 from src.utils.constants import Tip, MessageLevel
@@ -17,7 +16,7 @@ class InputContent(Content):
         self.race_picker = RaceSelector(
             self.frame,
             self.load,
-            self.get_race_days(),
+            Storage.get_race_date_and_num_count(),
             30
         )
         self.tipster_picker = TipsterSelector(
@@ -102,26 +101,3 @@ class InputContent(Content):
             self.set_message(MessageLevel.SUCCESS, msg_saved)
         except:
             self.set_message(MessageLevel.ERROR, msg_fail)
-
-    @staticmethod
-    def get_race_days() -> dict:
-        """
-        Return up to the most recent 3 race days
-        and the total races for each one of them.
-        """
-        temp, races = {}, {}
-        for (race_date, race_num) in Storage.get_race_tuples():
-            if race_date not in temp:
-                temp[race_date] = race_num
-            else:
-                if race_num > temp[race_date]:
-                    temp[race_date] = race_num
-
-        dates = [date.fromisoformat(d) for d in temp.keys()]
-        dates.sort(reverse=True)
-        dates = [d.isoformat() for d in dates]
-
-        for i in range(min(len(dates), 3)):
-            races[dates[i]] = temp[dates[i]]
-
-        return races
