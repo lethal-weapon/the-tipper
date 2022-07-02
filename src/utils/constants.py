@@ -102,6 +102,12 @@ class Pool:
     WIN_PLA = 'WIN_PLA'
 
 
+ROI_MAPPER = {
+    Pool.WIN: 5,
+    Pool.QIN: 30,
+    Pool.FCT: 60,
+}
+
 POOL_MAPPER = {
     'WIN': Pool.WIN,
     'PLACE': Pool.PLA,
