@@ -13,6 +13,9 @@ class Content:
     def pack_message(self):
         self.message.pack(side=RIGHT)
 
+    def clear_message(self):
+        self.set_message(MessageLevel.INFO, '')
+
     def set_message(self, level: str, text: str):
         self.message.__setitem__(Style.TEXT, text)
 

@@ -2,9 +2,9 @@ TIPSTER_SOURCES = {
     'HKJC': [
         'Paul Lally',
         'Tom Wood',
+        'Mark McNamara',
         'Jenny Chapman',
         'Nick Child',
-        'Mark McNamara',
         'Andrew Le Jeune',
         'Alan Aitken',
     ],
@@ -17,11 +17,11 @@ TIPSTER_SOURCES = {
         'KC',
     ],
     'Newspaper': [
-        'iRace',
         'Daily',
         'HKDN',
         'Sun Journal',
         'Today Jockey',
+        'iRace',
     ],
     'racing.on.cc': [
         '張基',
