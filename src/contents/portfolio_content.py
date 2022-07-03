@@ -95,12 +95,16 @@ class PortfolioContent(Content):
                     fg=Color.BLUE if t[Tip.CONFIDENT] else Color.BLACK
                 ).grid(row=row, column=2, padx=20, pady=3)
 
-                for at in t[Tip.TIP]:
-                    col = 3 + t[Tip.TIP].index(at)
-                    Label(self.nested_frame, text=str(at), font='Times 14') \
-                        .grid(row=row, column=col, padx=10, pady=3)
+                for h in t[Tip.TIP]:
+                    col = 3 + t[Tip.TIP].index(h)
+                    Label(
+                        self.nested_frame,
+                        text=str(h),
+                        font=f'Times 14 {self.get_horse_num_font(h)}',
+                        fg=self.get_horse_num_color(h),
+                    ).grid(row=row, column=col, padx=10, pady=3)
 
-                horse_nums = [str(n) for n in sorted(t[Tip.TIP])]
+                horse_nums = [str(h) for h in t[Tip.TIP]]
                 rois = self.get_return_on_investment(horse_nums)
                 for pool, roi in rois.items():
                     col = 8 + [k for k in rois.keys()].index(pool)
@@ -113,6 +117,26 @@ class PortfolioContent(Content):
 
             tips_count += len(tips_list)
 
+    def get_horse_num_font(self, horse_num: int) -> str:
+        if self.is_winner(horse_num) or self.is_second(horse_num):
+            return 'bold underline'
+        return ''
+
+    def get_horse_num_color(self, horse_num: int) -> str:
+        if self.is_winner(horse_num):
+            return Color.GOLD
+        elif self.is_second(horse_num):
+            return Color.SILVER
+        return Color.BLACK
+
+    def is_winner(self, horse_num: int):
+        return Pool.WIN in self.dividends and \
+               str(horse_num) in self.dividends[Pool.WIN]
+
+    def is_second(self, horse_num: int):
+        return Pool.FCT in self.dividends and \
+               horse_num in self.dividends[Pool.FCT][0][Race.COMBINATION]
+
     def get_return_on_investment(self, tips: [str]) -> dict:
         return {
             Pool.WIN: self.get_win_roi(tips),
@@ -124,10 +148,14 @@ class PortfolioContent(Content):
         if Pool.WIN_PLA not in self.odds:
             return 0
 
+        # if the winner is in the tips, it has much higher chance
+        # within the first 3 selections rather than being the last one
+        potential_winners = tips[:3]
+
         odds_list = []
-        for h in tips:
-            if h in self.odds[Pool.WIN_PLA]:
-                odds_list.append(self.odds[Pool.WIN_PLA][h][0])
+        for w in potential_winners:
+            if w in self.odds[Pool.WIN_PLA]:
+                odds_list.append(self.odds[Pool.WIN_PLA][w][0])
 
         return \
             round(sum(odds_list) / len(odds_list) - len(odds_list), 1)
@@ -136,10 +164,13 @@ class PortfolioContent(Content):
         if Pool.QIN not in self.odds:
             return 0
 
+        # any pair combination can potentially win the QUINELLA
+        sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
+
         odds_list = []
-        for i in range(len(tips) - 1):
-            for j in range(i + 1, len(tips)):
-                horse_1, horse_2 = tips[i], tips[j]
+        for i in range(len(sorted_tips) - 1):
+            for j in range(i + 1, len(sorted_tips)):
+                horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
 
                 if horse_1 in self.odds[Pool.QIN] and \
                     horse_2 in self.odds[Pool.QIN][horse_1]:
@@ -152,12 +183,17 @@ class PortfolioContent(Content):
         if Pool.FCT not in self.odds:
             return 0
 
+        # like the WIN, winner will be in the first 3 selections
+        # and all selections can be in the 2nd place, Multi-Banker
+        winner_list = tips[:3]
+
         odds_list = []
-        for i in range(len(tips)):
+        for i in range(len(winner_list)):
             for j in range(len(tips)):
-                if i == j:
+                horse_1, horse_2 = winner_list[i], tips[j]
+
+                if horse_1 == horse_2:
                     continue
-                horse_1, horse_2 = tips[i], tips[j]
 
                 if horse_1 in self.odds[Pool.FCT] and \
                     horse_2 in self.odds[Pool.FCT][horse_1]:

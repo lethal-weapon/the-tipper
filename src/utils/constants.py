@@ -30,6 +30,8 @@ class Color:
     GREEN = 'green'
     BLACK = 'black'
     WHITE = 'white'
+    GOLD = 'gold'
+    SILVER = 'silver'
 
 
 class MessageLevel:
@@ -104,8 +106,8 @@ class Pool:
 
 ROI_MAPPER = {
     Pool.WIN: 5,
-    Pool.QIN: 30,
-    Pool.FCT: 60,
+    Pool.QIN: 25,
+    Pool.FCT: 50,
 }
 
 POOL_MAPPER = {
