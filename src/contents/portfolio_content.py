@@ -4,7 +4,7 @@ from src.storage.storage import Storage
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
 from src.utils.constants import \
-    Race, Tip, Pool, Misc, Color, ROI_MAPPER, MessageLevel
+    Race, Tip, Pool, Misc, Color, MessageLevel
 
 
 class PortfolioContent(Content):
@@ -112,8 +112,7 @@ class PortfolioContent(Content):
                         self.nested_frame,
                         text=str(roi),
                         font='Times 14',
-                        fg=Color.RED if roi < ROI_MAPPER[pool] else Color.GREEN
-                    ).grid(row=row, column=col, padx=10, pady=3)
+                    ).grid(row=row, column=col, padx=15, pady=3)
 
             tips_count += len(tips_list)
 
@@ -144,54 +143,79 @@ class PortfolioContent(Content):
             Pool.FCT: self.get_fct_roi(tips),
         }
 
-    def get_win_roi(self, tips: [str]) -> float:
+    def get_win_roi(self, tips: [str]):
         if Pool.WIN_PLA not in self.odds:
             return 0
 
-        # if the winner is in the tips, it has much higher chance
-        # within the first 3 selections rather than being the last one
-        potential_winners = tips[:3]
-
         odds_list = []
-        for w in potential_winners:
-            if w in self.odds[Pool.WIN_PLA]:
-                odds_list.append(self.odds[Pool.WIN_PLA][w][0])
+        actual_win_odds = 0
 
-        return \
+        for t in tips:
+            if t in self.odds[Pool.WIN_PLA]:
+                odds_list.append(self.odds[Pool.WIN_PLA][t][0])
+
+            if Pool.WIN in self.dividends and \
+                t in self.dividends[Pool.WIN] and \
+                self.dividends[Pool.WIN][t] > actual_win_odds:
+                actual_win_odds = self.dividends[Pool.WIN][t]
+
+        potential_roi = \
             round(sum(odds_list) / len(odds_list) - len(odds_list), 1)
+        actual_roi = \
+            round(actual_win_odds - len(odds_list), 1)
 
-    def get_qin_roi(self, tips: [str]) -> int:
+        if actual_win_odds == 0:
+            return potential_roi
+        else:
+            return f'{potential_roi} [{actual_roi}]'
+
+    def get_qin_roi(self, tips: [str]):
         if Pool.QIN not in self.odds:
             return 0
 
         # any pair combination can potentially win the QUINELLA
         sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
-
         odds_list = []
+        actual_qin_odds = 0
+
         for i in range(len(sorted_tips) - 1):
             for j in range(i + 1, len(sorted_tips)):
                 horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
+                if horse_1 == horse_2:
+                    continue
 
                 if horse_1 in self.odds[Pool.QIN] and \
                     horse_2 in self.odds[Pool.QIN][horse_1]:
                     odds_list.append(self.odds[Pool.QIN][horse_1][horse_2])
 
-        return \
-            int(sum(odds_list) / len(odds_list) - len(odds_list))
+                if Pool.QIN in self.dividends:
+                    for comb in self.dividends[Pool.QIN]:
+                        if int(horse_1) in comb[Race.COMBINATION] and \
+                            int(horse_2) in comb[Race.COMBINATION] and \
+                            comb[Race.ODDS] > actual_qin_odds:
+                            actual_qin_odds = comb[Race.ODDS]
 
-    def get_fct_roi(self, tips: [str]) -> int:
+        potential_roi = \
+            int(sum(odds_list) / len(odds_list) - len(odds_list))
+        actual_roi = \
+            int(actual_qin_odds - len(odds_list))
+
+        if actual_qin_odds == 0:
+            return potential_roi
+        else:
+            return f'{potential_roi} [{actual_roi}]'
+
+    def get_fct_roi(self, tips: [str]):
         if Pool.FCT not in self.odds:
             return 0
 
-        # like the WIN, winner will be in the first 3 selections
-        # and all selections can be in the 2nd place, Multi-Banker
-        winner_list = tips[:3]
-
+        sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
         odds_list = []
-        for i in range(len(winner_list)):
-            for j in range(len(tips)):
-                horse_1, horse_2 = winner_list[i], tips[j]
+        actual_fct_odds = 0
 
+        for i in range(len(sorted_tips)):
+            for j in range(len(sorted_tips)):
+                horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
                 if horse_1 == horse_2:
                     continue
 
@@ -199,5 +223,19 @@ class PortfolioContent(Content):
                     horse_2 in self.odds[Pool.FCT][horse_1]:
                     odds_list.append(self.odds[Pool.FCT][horse_1][horse_2])
 
-        return \
+                if Pool.FCT in self.dividends:
+                    for comb in self.dividends[Pool.FCT]:
+                        if int(horse_1) in comb[Race.COMBINATION] and \
+                            int(horse_2) in comb[Race.COMBINATION] and \
+                            comb[Race.ODDS] > actual_fct_odds:
+                            actual_fct_odds = comb[Race.ODDS]
+
+        potential_roi = \
             int(sum(odds_list) / len(odds_list) - len(odds_list))
+        actual_roi = \
+            int(actual_fct_odds - len(odds_list))
+
+        if actual_fct_odds == 0:
+            return potential_roi
+        else:
+            return f'{potential_roi} [{actual_roi}]'
