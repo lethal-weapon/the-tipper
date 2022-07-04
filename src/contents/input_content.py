@@ -29,13 +29,14 @@ class InputContent(Content):
             4,
             30
         )
-        Button(self.frame,
-               text='Save',
-               font='Times 18 bold',
-               width=10,
-               borderwidth=5,
-               command=self.save) \
-            .pack(pady=30)
+        Button(
+            self.frame,
+            text='Save',
+            font='Times 18 bold',
+            width=10,
+            borderwidth=5,
+            command=self.save
+        ).pack(pady=30)
 
         self.pack_message()
         self.frame.pack()

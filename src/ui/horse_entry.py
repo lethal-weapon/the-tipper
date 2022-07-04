@@ -5,10 +5,12 @@ from src.utils.constants import Color, Misc
 
 class HorseEntry:
 
-    def __init__(self,
-                 parent_widget,
-                 entries: int,
-                 pady: int):
+    def __init__(
+        self,
+        parent_widget,
+        entries: int,
+        pady: int
+    ):
         frame = Frame(parent_widget)
 
         label_style, entry_style = 'Times 16 bold', 'Times 18'

@@ -6,11 +6,13 @@ from src.utils.constants import Misc
 
 class RaceSelector:
 
-    def __init__(self,
-                 parent_widget,
-                 callback,
-                 races: dict,
-                 pady: int):
+    def __init__(
+        self,
+        parent_widget,
+        callback,
+        races: dict,
+        pady: int
+    ):
         frame = Frame(parent_widget)
         self.callback = callback
         self.races = races

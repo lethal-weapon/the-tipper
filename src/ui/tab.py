@@ -5,10 +5,12 @@ from src.utils.constants import Widget, Style, Color
 
 class Tab:
 
-    def __init__(self,
-                 parent_widget,
-                 callback,
-                 title):
+    def __init__(
+        self,
+        parent_widget,
+        callback,
+        title
+    ):
         self.callback = callback
         self.canvas = Canvas(
             parent_widget,

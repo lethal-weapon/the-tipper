@@ -6,10 +6,12 @@ from src.utils.tipster_sources import TIPSTER_SOURCES
 
 class TipsterSelector:
 
-    def __init__(self,
-                 parent_widget,
-                 callback,
-                 pady: int):
+    def __init__(
+        self,
+        parent_widget,
+        callback,
+        pady: int
+    ):
         frame = Frame(parent_widget)
         self.callback = callback
 

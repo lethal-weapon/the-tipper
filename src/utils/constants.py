@@ -58,6 +58,7 @@ class Time:
     SIX_AM = time(hour=6)
     ONE_PM = time(hour=13)
     ODDS_FREQUENCY = 7
+    REFRESH_FREQUENCY = 10
 
 
 class Race:
