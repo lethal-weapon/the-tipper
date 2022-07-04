@@ -4,7 +4,7 @@ from src.storage.storage import Storage
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
 from src.utils.constants import \
-    Race, Tip, Pool, Misc, Color, MessageLevel
+    Race, Tip, Pool, Misc, Color, ROI_RANGE, MessageLevel
 
 
 class PortfolioContent(Content):
@@ -64,7 +64,7 @@ class PortfolioContent(Content):
         Label(self.nested_frame, text='') \
             .grid(row=1, column=2 + 4 + 1, padx=10, pady=5)
 
-        pools = ['WIN', 'QIN', 'FCT']
+        pools = [Pool.WIN, Pool.QIN, Pool.FCT]
         for pool in pools:
             index = 1 + pools.index(pool)
             Label(self.nested_frame, text=pool, font=header_font) \
@@ -112,9 +112,24 @@ class PortfolioContent(Content):
                         self.nested_frame,
                         text=str(roi),
                         font='Times 14',
+                        fg=self.get_roi_color(pool, str(roi))
                     ).grid(row=row, column=col, padx=15, pady=3)
 
             tips_count += len(tips_list)
+
+    def get_roi_color(self, pool: str, roi: str) -> str:
+        # know the result and won
+        if '[' in roi:
+            actual_roi = roi.split(' ')[1].replace('[', '').replace(']', '')
+            return Color.GREEN if float(actual_roi) > 0 else Color.RED
+
+        # don't know the result yet
+        if Pool.WIN not in self.dividends:
+            roi_range = ROI_RANGE[pool]
+            if roi_range[0] <= float(roi) <= roi_range[1]:
+                return Color.GREEN
+
+        return Color.BLACK
 
     def get_horse_num_font(self, horse_num: int) -> str:
         if self.is_winner(horse_num) or self.is_second(horse_num):
@@ -173,7 +188,6 @@ class PortfolioContent(Content):
         if Pool.QIN not in self.odds:
             return 0
 
-        # any pair combination can potentially win the QUINELLA
         sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
         odds_list = []
         actual_qin_odds = 0

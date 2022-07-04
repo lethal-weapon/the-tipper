@@ -104,10 +104,10 @@ class Pool:
     WIN_PLA = 'WIN_PLA'
 
 
-ROI_MAPPER = {
-    Pool.WIN: 5,
-    Pool.QIN: 25,
-    Pool.FCT: 50,
+ROI_RANGE = {
+    Pool.WIN: (5, 10),
+    Pool.QIN: (25, 75),
+    Pool.FCT: (50, 150),
 }
 
 POOL_MAPPER = {
