@@ -57,8 +57,8 @@ class Time:
     TWO_HOURS = timedelta(hours=2)
     SIX_AM = time(hour=6)
     ONE_PM = time(hour=13)
-    ODDS_FREQUENCY = 7
-    REFRESH_FREQUENCY = 10
+    ODDS_FREQUENCY_SEC = 7
+    REFRESH_FREQUENCY_MS = 10000
 
 
 class Race:

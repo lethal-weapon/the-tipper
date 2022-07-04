@@ -8,7 +8,7 @@ from src.storage.storage import Storage
 from src.robots.race import RaceRobot
 from src.robots.dividend import DividendRobot
 from src.robots.manager import RobotManager
-from src.utils.constants import Race, State, MessageLevel
+from src.utils.constants import Race, State, Time, MessageLevel
 from src.utils.general import get_now, get_current_date_and_time
 
 
@@ -17,10 +17,12 @@ class ControlContent(Content):
     def __init__(
         self,
         parent_widget,
-        recreate_input_content
+        recreate_input_content,
+        refresh_portfolio_content,
     ):
         super().__init__(parent_widget)
         self.recreate_input_content = recreate_input_content
+        self.refresh_portfolio_content = refresh_portfolio_content
 
         self.info = None
         self.race_date = None
@@ -232,13 +234,14 @@ class ControlContent(Content):
             kwargs={'race_date_to_work': race_date}
         )
         self.worker.start()
-        self.frame.after(250, self.check_odds_worker_started)
+        self.frame.after(1000, self.check_odds_worker_started)
 
     def check_odds_worker_started(self):
         if self.worker.is_alive():
             self.btn_odds_stop.configure(state=State.NORMAL)
+            self.refresh_portfolio_until_odds_stopped()
         else:
-            self.frame.after(250, self.check_odds_worker_started)
+            self.frame.after(1000, self.check_odds_worker_started)
 
     def on_odds_stopped(self):
         self.disable_ui()
@@ -249,3 +252,12 @@ class ControlContent(Content):
         else:
             self.enable_ui()
             self.btn_odds_stop.configure(state=State.DISABLE)
+
+    def refresh_portfolio_until_odds_stopped(self):
+        self.refresh_portfolio_content()
+
+        if self.worker.is_alive():
+            self.frame.after(
+                Time.REFRESH_FREQUENCY_MS,
+                self.refresh_portfolio_until_odds_stopped
+            )

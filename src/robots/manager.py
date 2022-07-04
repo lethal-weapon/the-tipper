@@ -72,6 +72,6 @@ class RobotManager:
                     robot.run(race_date, str(race_num), venue_code)
 
             Storage.write(race_date_to_work)
-            time.sleep(Time.ODDS_FREQUENCY)
+            time.sleep(Time.ODDS_FREQUENCY_SEC)
 
         print(f'{get_thread_name()} ENDED')

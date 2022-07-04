@@ -49,10 +49,14 @@ class Tipper:
         portfolios = Frame(cls.window)
         performance = Frame(cls.window)
 
-        ControlContent(controls, cls.recreate_input_content)
-        InputContent(inputs)
-        PortfolioContent(portfolios)
-        PerformanceContent(performance)
+        input_cont = InputContent(inputs)
+        port_cont = PortfolioContent(portfolios)
+        perf_cont = PerformanceContent(performance)
+        contr_cont = ControlContent(
+            controls,
+            cls.recreate_input_content,
+            port_cont.refresh,
+        )
 
         cls.contents = [controls, inputs, portfolios, performance]
         portfolios.pack()
