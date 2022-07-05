@@ -3,7 +3,7 @@ from datetime import time, timedelta
 
 class Widget:
     WINDOW_WIDTH = 900
-    WINDOW_HEIGHT = WINDOW_WIDTH * 5 // 8
+    WINDOW_HEIGHT = 630
 
     INITIAL_X = 400
     INITIAL_Y = 250
