@@ -87,7 +87,7 @@ class Storage:
         stored = cls.get_race(race_date, race_num)
         if stored:
             stored[Race.ODDS][odds_type] = odds_value
-            print(f'{odds_type} <{race_date}, {race_num}> saved')
+            # print(f'{odds_type} <{race_date}, {race_num}> saved')
         else:
             print(f'Racecard <{race_date}, {race_num}> does not exist')
 

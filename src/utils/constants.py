@@ -32,6 +32,7 @@ class Color:
     WHITE = 'white'
     GOLD = 'gold'
     SILVER = 'silver'
+    BROWN = 'brown'
 
 
 class MessageLevel:

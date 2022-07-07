@@ -134,6 +134,8 @@ class PortfolioContent(Content):
     def get_horse_num_font(self, horse_num: int) -> str:
         if self.is_winner(horse_num) or self.is_second(horse_num):
             return 'bold underline'
+        elif self.is_fourth(horse_num):
+            return 'bold'
         return ''
 
     def get_horse_num_color(self, horse_num: int) -> str:
@@ -141,6 +143,8 @@ class PortfolioContent(Content):
             return Color.GOLD
         elif self.is_second(horse_num):
             return Color.SILVER
+        elif self.is_third(horse_num):
+            return Color.BROWN
         return Color.BLACK
 
     def is_winner(self, horse_num: int):
@@ -148,8 +152,16 @@ class PortfolioContent(Content):
                str(horse_num) in self.dividends[Pool.WIN]
 
     def is_second(self, horse_num: int):
-        return Pool.FCT in self.dividends and \
-               horse_num in self.dividends[Pool.FCT][0][Race.COMBINATION]
+        return Pool.QTT in self.dividends and \
+               horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][1]
+
+    def is_third(self, horse_num: int):
+        return Pool.QTT in self.dividends and \
+               horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][2]
+
+    def is_fourth(self, horse_num: int):
+        return Pool.QTT in self.dividends and \
+               horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][3]
 
     def get_return_on_investment(self, tips: [str]) -> dict:
         return {
