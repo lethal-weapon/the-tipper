@@ -5,8 +5,8 @@ class Widget:
     WINDOW_WIDTH = 1000
     WINDOW_HEIGHT = 700
 
-    INITIAL_X = 400
-    INITIAL_Y = 250
+    INITIAL_X = 200
+    INITIAL_Y = 100
 
     TAB_WIDTH = 200
     TAB_HEIGHT = 50
@@ -108,7 +108,7 @@ class Pool:
 
 ROI_RANGE = {
     Pool.WIN: (5, 10),
-    Pool.QPL: (15, 50),
+    Pool.QPL: (5, 20),
     Pool.QIN: (25, 75),
     Pool.FCT: (50, 150),
 }

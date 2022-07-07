@@ -45,15 +45,15 @@ class ControlContent(Content):
         Label(
             info_frame,
             text='Next Meeting:',
-            font='Times 16 italic',
+            font='Times 18 italic',
         ).pack(side=LEFT, padx=30)
         self.info = Label(
             info_frame,
             text='',
-            font='Times 16 bold',
+            font='Times 18 bold',
         )
         self.info.pack(side=LEFT)
-        info_frame.pack(pady=20)
+        info_frame.pack(pady=40)
 
     def build_button_frame(self):
         button_frame = Frame(self.frame)

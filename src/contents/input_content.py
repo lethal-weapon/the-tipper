@@ -17,12 +17,12 @@ class InputContent(Content):
             self.frame,
             self.load,
             Storage.get_race_date_and_num_count(),
-            30
+            50
         )
         self.tipster_picker = TipsterSelector(
             self.frame,
             self.load,
-            20
+            30
         )
         self.horse_entry = HorseEntry(
             self.frame,
@@ -36,7 +36,7 @@ class InputContent(Content):
             width=10,
             borderwidth=5,
             command=self.save
-        ).pack(pady=30)
+        ).pack(pady=40)
 
         self.pack_message()
         self.frame.pack()
