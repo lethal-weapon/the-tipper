@@ -64,7 +64,7 @@ class PortfolioContent(Content):
         Label(self.nested_frame, text='') \
             .grid(row=1, column=2 + 4 + 1, padx=10, pady=5)
 
-        pools = [Pool.WIN, Pool.QIN, Pool.FCT]
+        pools = [Pool.WIN, Pool.QPL, Pool.QIN, Pool.FCT]
         for pool in pools:
             index = 1 + pools.index(pool)
             Label(self.nested_frame, text=pool, font=header_font) \
@@ -166,6 +166,7 @@ class PortfolioContent(Content):
     def get_return_on_investment(self, tips: [str]) -> dict:
         return {
             Pool.WIN: self.get_win_roi(tips),
+            Pool.QPL: self.get_qpl_roi(tips),
             Pool.QIN: self.get_qin_roi(tips),
             Pool.FCT: self.get_fct_roi(tips),
         }
@@ -192,6 +193,40 @@ class PortfolioContent(Content):
             round(actual_win_odds - len(odds_list), 1)
 
         if actual_win_odds == 0:
+            return potential_roi
+        else:
+            return f'{potential_roi} [{actual_roi}]'
+
+    def get_qpl_roi(self, tips: [str]):
+        if Pool.QPL not in self.odds:
+            return 0
+
+        sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
+        odds_list = []
+        actual_qpl_odds = 0
+
+        for i in range(len(sorted_tips) - 1):
+            for j in range(i + 1, len(sorted_tips)):
+                horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
+                if horse_1 == horse_2:
+                    continue
+
+                if horse_1 in self.odds[Pool.QPL] and \
+                    horse_2 in self.odds[Pool.QPL][horse_1]:
+                    odds_list.append(self.odds[Pool.QPL][horse_1][horse_2])
+
+                if Pool.QPL in self.dividends:
+                    for comb in self.dividends[Pool.QPL]:
+                        if int(horse_1) in comb[Race.COMBINATION] and \
+                            int(horse_2) in comb[Race.COMBINATION]:
+                            actual_qpl_odds += comb[Race.ODDS]
+
+        potential_roi = \
+            int(sum(odds_list) / len(odds_list) - len(odds_list))
+        actual_roi = \
+            int(actual_qpl_odds - len(odds_list))
+
+        if actual_qpl_odds == 0:
             return potential_roi
         else:
             return f'{potential_roi} [{actual_roi}]'

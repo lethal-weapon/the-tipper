@@ -2,8 +2,8 @@ from datetime import time, timedelta
 
 
 class Widget:
-    WINDOW_WIDTH = 900
-    WINDOW_HEIGHT = 630
+    WINDOW_WIDTH = 1000
+    WINDOW_HEIGHT = 700
 
     INITIAL_X = 400
     INITIAL_Y = 250
@@ -108,6 +108,7 @@ class Pool:
 
 ROI_RANGE = {
     Pool.WIN: (5, 10),
+    Pool.QPL: (15, 50),
     Pool.QIN: (25, 75),
     Pool.FCT: (50, 150),
 }
