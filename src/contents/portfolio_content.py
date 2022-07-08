@@ -3,6 +3,7 @@ from tkinter import Frame, Label
 from src.storage.storage import Storage
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
+from src.utils.roi import ROI
 from src.utils.constants import \
     Race, Tip, Pool, Misc, Color, ROI_RANGE, MessageLevel
 
@@ -104,29 +105,34 @@ class PortfolioContent(Content):
                         fg=self.get_horse_num_color(h),
                     ).grid(row=row, column=col, padx=10, pady=3)
 
-                horse_nums = [str(h) for h in t[Tip.TIP]]
-                rois = self.get_return_on_investment(horse_nums)
-                for pool, roi in rois.items():
+                rois = ROI.get_return_on_investments(
+                    self.odds, self.dividends, t[Tip.TIP]
+                )
+                for pool, roi_pair in rois.items():
                     col = 8 + [k for k in rois.keys()].index(pool)
+                    roi_text = f'{roi_pair[0] if roi_pair[0] is not None else 0}'
+                    if roi_pair[1] is not None:
+                        roi_text += f' [{roi_pair[1]}]'
+
                     Label(
                         self.nested_frame,
-                        text=str(roi),
+                        text=roi_text,
                         font='Times 14',
-                        fg=self.get_roi_color(pool, str(roi))
+                        fg=self.get_roi_color(pool, roi_text)
                     ).grid(row=row, column=col, padx=15, pady=3)
 
             tips_count += len(tips_list)
 
-    def get_roi_color(self, pool: str, roi: str) -> str:
+    def get_roi_color(self, pool: str, roi_text: str) -> str:
         # know the result and won
-        if '[' in roi:
-            actual_roi = roi.split(' ')[1].replace('[', '').replace(']', '')
+        if '[' in roi_text:
+            actual_roi = roi_text.split(' ')[1].replace('[', '').replace(']', '')
             return Color.GREEN if float(actual_roi) > 0 else Color.RED
 
         # don't know the result yet
         if Pool.WIN not in self.dividends:
             roi_range = ROI_RANGE[pool]
-            if roi_range[0] <= float(roi) <= roi_range[1]:
+            if roi_range[0] <= float(roi_text) <= roi_range[1]:
                 return Color.GREEN
 
         return Color.BLACK
@@ -162,141 +168,3 @@ class PortfolioContent(Content):
     def is_fourth(self, horse_num: int):
         return Pool.QTT in self.dividends and \
                horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][3]
-
-    def get_return_on_investment(self, tips: [str]) -> dict:
-        return {
-            Pool.WIN: self.get_win_roi(tips),
-            Pool.QPL: self.get_qpl_roi(tips),
-            Pool.QIN: self.get_qin_roi(tips),
-            Pool.FCT: self.get_fct_roi(tips),
-        }
-
-    def get_win_roi(self, tips: [str]):
-        if Pool.WIN_PLA not in self.odds:
-            return 0
-
-        odds_list = []
-        actual_win_odds = 0
-
-        for t in tips:
-            if t in self.odds[Pool.WIN_PLA]:
-                odds_list.append(self.odds[Pool.WIN_PLA][t][0])
-
-            if Pool.WIN in self.dividends and \
-                t in self.dividends[Pool.WIN] and \
-                self.dividends[Pool.WIN][t] > actual_win_odds:
-                actual_win_odds = self.dividends[Pool.WIN][t]
-
-        potential_roi = \
-            round(sum(odds_list) / len(odds_list) - len(odds_list), 1)
-        actual_roi = \
-            round(actual_win_odds - len(odds_list), 1)
-
-        if actual_win_odds == 0:
-            return potential_roi
-        else:
-            return f'{potential_roi} [{actual_roi}]'
-
-    def get_qpl_roi(self, tips: [str]):
-        if Pool.QPL not in self.odds:
-            return 0
-
-        sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
-        odds_list = []
-        actual_qpl_odds = 0
-
-        for i in range(len(sorted_tips) - 1):
-            for j in range(i + 1, len(sorted_tips)):
-                horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
-                if horse_1 == horse_2:
-                    continue
-
-                if horse_1 in self.odds[Pool.QPL] and \
-                    horse_2 in self.odds[Pool.QPL][horse_1]:
-                    odds_list.append(self.odds[Pool.QPL][horse_1][horse_2])
-
-                if Pool.QPL in self.dividends:
-                    for comb in self.dividends[Pool.QPL]:
-                        if int(horse_1) in comb[Race.COMBINATION] and \
-                            int(horse_2) in comb[Race.COMBINATION]:
-                            actual_qpl_odds += comb[Race.ODDS]
-
-        potential_roi = \
-            int(sum(odds_list) / len(odds_list) - len(odds_list))
-        actual_roi = \
-            int(actual_qpl_odds - len(odds_list))
-
-        if actual_qpl_odds == 0:
-            return potential_roi
-        else:
-            return f'{potential_roi} [{actual_roi}]'
-
-    def get_qin_roi(self, tips: [str]):
-        if Pool.QIN not in self.odds:
-            return 0
-
-        sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
-        odds_list = []
-        actual_qin_odds = 0
-
-        for i in range(len(sorted_tips) - 1):
-            for j in range(i + 1, len(sorted_tips)):
-                horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
-                if horse_1 == horse_2:
-                    continue
-
-                if horse_1 in self.odds[Pool.QIN] and \
-                    horse_2 in self.odds[Pool.QIN][horse_1]:
-                    odds_list.append(self.odds[Pool.QIN][horse_1][horse_2])
-
-                if Pool.QIN in self.dividends:
-                    for comb in self.dividends[Pool.QIN]:
-                        if int(horse_1) in comb[Race.COMBINATION] and \
-                            int(horse_2) in comb[Race.COMBINATION] and \
-                            comb[Race.ODDS] > actual_qin_odds:
-                            actual_qin_odds = comb[Race.ODDS]
-
-        potential_roi = \
-            int(sum(odds_list) / len(odds_list) - len(odds_list))
-        actual_roi = \
-            int(actual_qin_odds - len(odds_list))
-
-        if actual_qin_odds == 0:
-            return potential_roi
-        else:
-            return f'{potential_roi} [{actual_roi}]'
-
-    def get_fct_roi(self, tips: [str]):
-        if Pool.FCT not in self.odds:
-            return 0
-
-        sorted_tips = [str(h) for h in sorted([int(t) for t in tips])]
-        odds_list = []
-        actual_fct_odds = 0
-
-        for i in range(len(sorted_tips)):
-            for j in range(len(sorted_tips)):
-                horse_1, horse_2 = sorted_tips[i], sorted_tips[j]
-                if horse_1 == horse_2:
-                    continue
-
-                if horse_1 in self.odds[Pool.FCT] and \
-                    horse_2 in self.odds[Pool.FCT][horse_1]:
-                    odds_list.append(self.odds[Pool.FCT][horse_1][horse_2])
-
-                if Pool.FCT in self.dividends:
-                    for comb in self.dividends[Pool.FCT]:
-                        if int(horse_1) in comb[Race.COMBINATION] and \
-                            int(horse_2) in comb[Race.COMBINATION] and \
-                            comb[Race.ODDS] > actual_fct_odds:
-                            actual_fct_odds = comb[Race.ODDS]
-
-        potential_roi = \
-            int(sum(odds_list) / len(odds_list) - len(odds_list))
-        actual_roi = \
-            int(actual_fct_odds - len(odds_list))
-
-        if actual_fct_odds == 0:
-            return potential_roi
-        else:
-            return f'{potential_roi} [{actual_roi}]'
