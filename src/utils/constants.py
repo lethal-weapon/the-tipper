@@ -106,13 +106,6 @@ class Pool:
     WIN_PLA = 'WIN_PLA'
 
 
-ROI_RANGE = {
-    Pool.WIN: (5, 10),
-    Pool.QPL: (5, 20),
-    Pool.QIN: (25, 75),
-    Pool.FCT: (50, 150),
-}
-
 POOL_MAPPER = {
     'WIN': Pool.WIN,
     'PLACE': Pool.PLA,

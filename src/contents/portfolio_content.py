@@ -3,9 +3,10 @@ from tkinter import Frame, Label
 from src.storage.storage import Storage
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
-from src.utils.roi import ROI
+from src.analysis.roi import ROI
+from src.analysis.roi_range import ROIRange
 from src.utils.constants import \
-    Race, Tip, Pool, Misc, Color, ROI_RANGE, MessageLevel
+    Race, Tip, Pool, Misc, Color, MessageLevel
 
 
 class PortfolioContent(Content):
@@ -118,12 +119,12 @@ class PortfolioContent(Content):
                         self.nested_frame,
                         text=roi_text,
                         font='Times 14',
-                        fg=self.get_roi_color(pool, roi_text)
+                        fg=self.get_roi_color(t, pool, roi_text)
                     ).grid(row=row, column=col, padx=15, pady=3)
 
             tips_count += len(tips_list)
 
-    def get_roi_color(self, pool: str, roi_text: str) -> str:
+    def get_roi_color(self, tip_obj: dict, pool: str, roi_text: str) -> str:
         # know the result and won
         if '[' in roi_text:
             actual_roi = roi_text.split(' ')[1].replace('[', '').replace(']', '')
@@ -131,7 +132,7 @@ class PortfolioContent(Content):
 
         # don't know the result yet
         if Pool.WIN not in self.dividends:
-            roi_range = ROI_RANGE[pool]
+            roi_range = ROIRange.get_ideal_range(tip_obj, pool)
             if roi_range[0] <= float(roi_text) <= roi_range[1]:
                 return Color.GREEN
 

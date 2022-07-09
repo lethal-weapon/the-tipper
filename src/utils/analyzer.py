@@ -1,5 +1,5 @@
 from src.storage.storage import Storage
-from src.utils.roi import ROI
+from src.analysis.roi import ROI
 from src.utils.constants import Race, Pool, Tip
 from src.utils.tipster_sources import TIPSTER_SOURCES
 
@@ -94,6 +94,7 @@ def run_optimized_performance():
                 f'{best_pool_score}/{best_races}/{best_pool_potential_roi_range}'
 
     print_optimized_result(performance)
+    print_optimized_tops(performance)
 
 
 def print_raw_result(performance, count):
@@ -140,9 +141,42 @@ def print_optimized_result(performance):
     print(f'------------------------------------------------------------------------------------------')
 
 
+def print_optimized_tops(performance):
+    tops = {}
+
+    for person, nested_rois in performance.items():
+        for pool, roi in nested_rois.items():
+            if pool not in tops:
+                tops[pool] = []
+
+            slices = roi.split('/')
+            score, races = float(slices[0]), int(slices[1])
+            nested_slices = slices[2] \
+                .replace('(', '').replace(')', '').replace(' ', '').split(',')
+            lower, upper = int(nested_slices[0]), int(nested_slices[1])
+
+            if races < 2:
+                continue
+
+            index = 0
+            for (p, s, r, b) in tops[pool]:
+                if (score / races) < (s / r):
+                    index += 1
+            tops[pool].insert(index, (person, score, races, (lower, upper)))
+
+    for pool, score_list in tops.items():
+        print('  {:<15}'.format(pool))
+        for (p, s, r, b) in score_list:
+            print('  {:<15}  {:>5}  /{:>3} = {:>4}{:>15}'
+                  .format(p, str(int(s)), str(r), round((s / r), 1), str(b)))
+            if score_list.index((p, s, r, b)) == 3:
+                break
+        print()
+
+
 def run():
     build_rois()
-    run_raw_performance()
+    # run_raw_performance()
     run_optimized_performance()
 
 
