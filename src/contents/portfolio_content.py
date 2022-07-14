@@ -8,6 +8,8 @@ from src.analysis.roi_range import ROIRange
 from src.utils.constants import \
     Race, Tip, Pool, Misc, Color, MessageLevel
 
+ODDS_HIGHLIGHT_RANGE = (10, 30)
+
 
 class PortfolioContent(Content):
 
@@ -146,6 +148,14 @@ class PortfolioContent(Content):
         return ''
 
     def get_horse_num_color(self, horse_num: int) -> str:
+        # highlight horses with high win odds before having the result
+        if (Pool.WIN not in self.dividends) and Pool.WIN_PLA in self.odds:
+            num_str = str(horse_num)
+            if num_str in self.odds[Pool.WIN_PLA]:
+                win_odds = self.odds[Pool.WIN_PLA][num_str][0]
+                if ODDS_HIGHLIGHT_RANGE[0] <= win_odds <= ODDS_HIGHLIGHT_RANGE[1]:
+                    return Color.GREEN
+
         if self.is_winner(horse_num):
             return Color.GOLD
         elif self.is_second(horse_num):
