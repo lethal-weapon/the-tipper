@@ -3,6 +3,8 @@ from src.analysis.roi import ROI
 from src.utils.constants import Race, Pool, Tip
 from src.utils.tipster_sources import TIPSTER_SOURCES
 
+MIN_OPTIMIZED_RACES = len(Storage.get_race_dates())
+
 
 class ROIRange:
     rois: dict = {}
@@ -103,11 +105,14 @@ class ROIRange:
                     .replace('(', '').replace(')', '').replace(' ', '').split(',')
                 lower, upper = int(nested_slices[0]), int(nested_slices[1])
 
-                if races < 2:
+                if races < MIN_OPTIMIZED_RACES:
                     continue
 
                 index = 0
                 for (p, s, r, b) in cls.tops[pool]:
+                    if races == 0 or r == 0:
+                        index = len(cls.tops[pool])
+                        break
                     if (score / races) < (s / r):
                         index += 1
                 cls.tops[pool].insert(index, (person, score, races, (lower, upper)))

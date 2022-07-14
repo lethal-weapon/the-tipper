@@ -4,6 +4,7 @@ from src.utils.constants import Race, Pool, Tip
 from src.utils.tipster_sources import TIPSTER_SOURCES
 
 Storage.initialize()
+MIN_OPTIMIZED_RACES = len(Storage.get_race_dates())
 
 rois = {}
 
@@ -155,7 +156,7 @@ def print_optimized_tops(performance):
                 .replace('(', '').replace(')', '').replace(' ', '').split(',')
             lower, upper = int(nested_slices[0]), int(nested_slices[1])
 
-            if races < 2:
+            if races < MIN_OPTIMIZED_RACES:
                 continue
 
             index = 0
@@ -167,7 +168,7 @@ def print_optimized_tops(performance):
     for pool, score_list in tops.items():
         print('  {:<15}'.format(pool))
         for (p, s, r, b) in score_list:
-            print('  {:<15}  {:>5}  /{:>3} = {:>4}{:>15}'
+            print('  {:<25}  {:>5}  /{:>3} = {:>4}{:>15}'
                   .format(p, str(int(s)), str(r), round((s / r), 1), str(b)))
             if score_list.index((p, s, r, b)) == 3:
                 break
