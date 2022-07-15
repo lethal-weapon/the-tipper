@@ -1,5 +1,7 @@
 from src.utils.constants import Race, Pool
 
+MIN_ROI_WIN_ODDS = 10
+
 
 class ROI:
 
@@ -25,10 +27,12 @@ class ROI:
 
         for t in tips_str:
             if (Pool.WIN_PLA in odds) and (t in odds[Pool.WIN_PLA]):
-                odds_list.append(odds[Pool.WIN_PLA][t][0])
+                win_odds = odds[Pool.WIN_PLA][t][0]
+                if win_odds >= MIN_ROI_WIN_ODDS:
+                    odds_list.append(win_odds)
 
-            if (Pool.WIN in dividends) and (t in dividends[Pool.WIN]):
-                actual_win_odds += dividends[Pool.WIN][t]
+                    if (Pool.WIN in dividends) and (t in dividends[Pool.WIN]):
+                        actual_win_odds += dividends[Pool.WIN][t]
 
         if len(odds_list) > 0:
             potential_roi = \

@@ -1,5 +1,5 @@
 from src.storage.storage import Storage
-from src.analysis.roi import ROI
+from src.analysis.roi import ROI, MIN_ROI_WIN_ODDS
 from src.utils.constants import Race, Pool, Tip
 from src.utils.tipster_sources import TIPSTER_SOURCES
 
@@ -30,11 +30,17 @@ def build_rois():
 
                 correct_roi = {}
                 for pool, roi_pair in raw_roi.items():
+                    if roi_pair[0] is None:
+                        continue
                     if roi_pair[1] is not None:
                         correct_roi[pool] = roi_pair
                         continue
                     if pool == Pool.WIN:
-                        correct_roi[pool] = (roi_pair[0], -len(tip))
+                        try:
+                            nums = [t for t in tip if odds[Pool.WIN_PLA][str(t)][0] >= MIN_ROI_WIN_ODDS]
+                            correct_roi[pool] = (roi_pair[0], -len(nums))
+                        except:
+                            continue
                     elif pool == Pool.QIN or pool == Pool.QPL:
                         correct_roi[pool] = (roi_pair[0], -(len(tip) * (len(tip) - 1) // 2))
                     elif pool == Pool.FCT:

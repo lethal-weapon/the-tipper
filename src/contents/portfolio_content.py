@@ -3,12 +3,10 @@ from tkinter import Frame, Label
 from src.storage.storage import Storage
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
-from src.analysis.roi import ROI
+from src.analysis.roi import ROI, MIN_ROI_WIN_ODDS
 from src.analysis.roi_range import ROIRange
 from src.utils.constants import \
     Race, Tip, Pool, Misc, Color, MessageLevel
-
-ODDS_HIGHLIGHT_RANGE = (10, 30)
 
 
 class PortfolioContent(Content):
@@ -153,8 +151,8 @@ class PortfolioContent(Content):
             num_str = str(horse_num)
             if num_str in self.odds[Pool.WIN_PLA]:
                 win_odds = self.odds[Pool.WIN_PLA][num_str][0]
-                if ODDS_HIGHLIGHT_RANGE[0] <= win_odds <= ODDS_HIGHLIGHT_RANGE[1]:
-                    return Color.GREEN
+                if win_odds >= MIN_ROI_WIN_ODDS:
+                    return Color.ORANGE
 
         if self.is_winner(horse_num):
             return Color.GOLD
