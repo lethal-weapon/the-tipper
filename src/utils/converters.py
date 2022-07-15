@@ -50,6 +50,17 @@ def to_race_date_num_venue(url: str) -> (str, str, str):
     )
 
 
+def extract_race_date_num(url: str) -> (str, str):
+    # e.g. 'https://~hkjc.com~?type=fct&date=2022-07-16&venue=ST&raceno=6'
+    # e.g. 'https://~hkjc.com~?type=winplaodds&date={}&venue={}&start={}&end={}'
+    race_date = re.search(r'\d{4}-\d{2}-\d{2}', url).group(),
+    if 'winplaodds' in url:
+        race_num = re.search(r'end=\d{1,2}$', url).group().replace('end=', '')
+    else:
+        race_num = re.search(r'raceno=\d{1,2}$', url).group().replace('raceno=', ''),
+    return race_date, race_num
+
+
 def to_odds(dividend: str) -> float:
     # convert $10 dividend to the actual odds
     # e.g. '15.50'           -> 1.55

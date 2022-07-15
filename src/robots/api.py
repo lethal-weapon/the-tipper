@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.storage.storage import Storage
+from src.utils.converters import extract_race_date_num
 
 BASE_URL = 'https://bet.hkjc.com/racing/getJSON.aspx?'
 
@@ -54,8 +55,11 @@ class APIRobot(ABC):
         try:
             return self.do_fetch(url)
         except Exception as ex:
-            print(f'Error while fetching {self.get_robot_prefix()} '
-                  f'with url `{url}`: {str(ex)}')
+            info = str(extract_race_date_num(url)) \
+                .replace("'", "").replace("(", "") \
+                .replace(")", "").replace(",", "") \
+                .replace(" ", ", ")
+            print(f'Error while fetching {self.get_robot_prefix()} <{info}>')
             raise ex
 
     @abstractmethod
