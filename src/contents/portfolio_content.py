@@ -1,4 +1,5 @@
-from tkinter import Frame, Label
+import webbrowser
+from tkinter import Frame, Label, LEFT
 
 from src.storage.storage import Storage
 from src.contents.content import Content
@@ -14,12 +15,32 @@ class PortfolioContent(Content):
     def __init__(self, parent_widget):
         super().__init__(parent_widget)
 
+        self.header_frame = Frame(self.frame)
         self.race_picker = RaceSelector(
-            self.frame,
+            self.header_frame,
             self.refresh,
             Storage.get_race_date_and_num_count(),
-            10
+            10,
+            LEFT
         )
+        self.result_link = Label(
+            self.header_frame,
+            text='Result',
+            font='Times 16 underline',
+            cursor='hand2',
+        )
+        self.video_link = Label(
+            self.header_frame,
+            text='Replay',
+            font='Times 16 underline',
+            cursor='hand2',
+        )
+        self.result_link.bind('<Button-1>', self.open_race_result_page)
+        self.video_link.bind('<Button-1>', self.play_race_replay)
+        self.result_link.pack(padx=15, side=LEFT)
+        self.video_link.pack(side=LEFT)
+        self.header_frame.pack()
+
         self.content_frame = Frame(self.frame)
         self.tips = None
         self.odds = None
@@ -30,6 +51,16 @@ class PortfolioContent(Content):
         self.content_frame.pack()
         self.pack_message()
         self.frame.pack()
+
+    def play_race_replay(self, *e):
+        race_date, race_num = self.race_picker.get_race_date_num()
+        video_url = Storage.get_race(race_date, race_num)[Race.VIDEO_URL]
+        webbrowser.open_new_tab(video_url)
+
+    def open_race_result_page(self, *e):
+        race_date, race_num = self.race_picker.get_race_date_num()
+        result_url = Storage.get_race(race_date, race_num)[Race.RESULT_URL]
+        webbrowser.open_new_tab(result_url)
 
     def refresh(self):
         """ Recreate the contents according to the race date/num. """

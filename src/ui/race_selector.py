@@ -1,4 +1,4 @@
-from tkinter import Frame, Label, Button, LEFT, RIGHT
+from tkinter import Frame, Label, Button, TOP, LEFT, RIGHT
 
 from src.ui.dropdown import Dropdown
 from src.utils.constants import Misc
@@ -11,7 +11,8 @@ class RaceSelector:
         parent_widget,
         callback,
         races: dict,
-        pady: int
+        pady: int,
+        *pack_side,
     ):
         frame = Frame(parent_widget)
         self.callback = callback
@@ -36,7 +37,7 @@ class RaceSelector:
         Button(frame, text='Next', command=self.to_next).pack(button_style)
         Button(frame, text='Previous', command=self.to_previous).pack(button_style)
 
-        frame.pack(pady=pady)
+        frame.pack(pady=pady, side=pack_side if pack_side else TOP)
 
     def get_race_date_num(self) -> (str, int):
         return self.race_date.get_selected_option(), \
