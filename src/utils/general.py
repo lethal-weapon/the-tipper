@@ -12,6 +12,10 @@ def get_now() -> datetime:
     return datetime.now(tz=SETTINGS.BASE.TIMEZONE)
 
 
+def get_current_date() -> date:
+    return datetime.date(get_now())
+
+
 def get_current_date_and_time() -> (date, time):
     now = get_now()
     return datetime.date(now), datetime.time(now)

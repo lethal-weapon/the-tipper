@@ -179,6 +179,10 @@ class ControlContent(Content):
         self.set_info_message('Working on it...')
 
     def on_race_card_fetched(self):
+        if not RaceRobot.can_work():
+            self.set_info_message('Season recess right now.')
+            return
+
         self.disable_ui()
         self.worker = Thread(target=RaceRobot().run)
         self.worker.start()

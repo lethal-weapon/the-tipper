@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.utils.schema import *
 from src.utils.constants import Race
+from src.utils.general import get_current_date
 from src.storage.storage import Storage
 from src.robots.ui import UIRobot, RESPONSE_TIMEOUT
 
@@ -20,8 +21,23 @@ XPATH_RACE_NUM_ROW = '//div[contains(@class, "racingNum")]/table/tbody/tr[1]'
 XPATH_GEAR_DETAIL_DIV = '//div[contains(@class, "Gear")]'
 XPATH_RACE_INFO_DIV = '//div[contains(@class, "margin_top10")]/div[contains(@class, "f_fs13")]'
 
+SEASON_RECESS_RANGES = [
+    ('2022-07-17', '2022-09-09'),
+]
+
 
 class RaceRobot(UIRobot):
+
+    @classmethod
+    def can_work(cls) -> bool:
+        curr_date = get_current_date()
+        for (start_date, end_date) in SEASON_RECESS_RANGES:
+            recess_start = date.fromisoformat(start_date)
+            recess_end = date.fromisoformat(end_date)
+            if recess_start <= curr_date <= recess_end:
+                return False
+
+        return True
 
     def run(self):
         browser, race_date = None, ''
