@@ -130,7 +130,11 @@ class Storage:
         ]
 
     @classmethod
-    def get_race(cls, race_date: str, race_num: int) -> dict:
+    def get_race(
+        cls,
+        race_date: str,
+        race_num: int
+    ) -> dict:
         matches = list(filter(
             lambda d: d[Race.RACE_DATE] == race_date and d[Race.RACE_NUM] == race_num,
             cls.data

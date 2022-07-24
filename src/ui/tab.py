@@ -9,7 +9,7 @@ class Tab:
         self,
         parent_widget,
         callback,
-        title
+        title: str
     ):
         self.callback = callback
         self.canvas = Canvas(

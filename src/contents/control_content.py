@@ -8,8 +8,10 @@ from src.storage.storage import Storage
 from src.robots.race import RaceRobot
 from src.robots.dividend import DividendRobot
 from src.robots.manager import RobotManager
-from src.utils.constants import Race, State, Time, MessageLevel
+from src.utils.constants import Race, State, Time
 from src.utils.general import get_now, get_current_date_and_time
+
+RACE_DATE_OPTION_COUNT = 3
 
 
 class ControlContent(Content):
@@ -119,7 +121,7 @@ class ControlContent(Content):
         date_wrapper = Frame(button_frame)
         self.race_date = Dropdown(
             date_wrapper,
-            Storage.get_race_dates(),
+            Storage.get_race_dates()[:RACE_DATE_OPTION_COUNT],
             lambda e: None,
             {},
         )
@@ -165,20 +167,20 @@ class ControlContent(Content):
             self.btn_card, self.btn_dividend, self.btn_odds_start
         ]:
             button.configure(state=State.NORMAL)
-        self.set_message(MessageLevel.SUCCESS, 'Done.')
+        self.set_success_message('Done.')
 
     def disable_ui(self):
         self.race_date.disable()
         for button in [
-            self.btn_card, self.btn_dividend, self.btn_odds_start, self.btn_odds_stop
+            self.btn_card, self.btn_dividend,
+            self.btn_odds_start, self.btn_odds_stop
         ]:
             button.configure(state=State.DISABLE)
-        self.set_message(MessageLevel.INFO, 'Working on it...')
+        self.set_info_message('Working on it...')
 
     def on_race_card_fetched(self):
         self.disable_ui()
-        bot = RaceRobot()
-        self.worker = Thread(target=bot.run)
+        self.worker = Thread(target=RaceRobot().run)
         self.worker.start()
         self.frame.after(250, self.check_race_card_worker)
 
@@ -187,7 +189,8 @@ class ControlContent(Content):
             self.frame.after(250, self.check_race_card_worker)
         else:
             self.update_info()
-            self.race_date.set_options(Storage.get_race_dates())
+            self.race_date.set_options(
+                Storage.get_race_dates()[:RACE_DATE_OPTION_COUNT])
             self.enable_ui()
             self.recreate_input_content()
 
@@ -197,16 +200,12 @@ class ControlContent(Content):
             datetime.fromisoformat(Storage.get_race(selected_date, 1)[Race.TIME])
 
         if get_now() <= first_race_time:
-            self.set_message(
-                MessageLevel.INFO,
-                f'Meeting {selected_date} has not yet started.'
-            )
+            self.set_info_message(f'Meeting {selected_date} has not yet started.')
             return
 
         self.disable_ui()
-        bot = DividendRobot()
         self.worker = Thread(
-            target=bot.run,
+            target=DividendRobot().run,
             kwargs={Race.RACE_DATE: selected_date}
         )
         self.worker.start()
@@ -221,10 +220,8 @@ class ControlContent(Content):
     def on_odds_started(self):
         race_date = Storage.get_most_recent_race_date()
         if not RobotManager.can_work_on(race_date):
-            self.set_message(
-                MessageLevel.INFO,
-                f'Can not work on the meeting {race_date} right now.'
-            )
+            self.set_info_message(
+                f'Can not work on the meeting {race_date} right now.')
             return
 
         self.disable_ui()

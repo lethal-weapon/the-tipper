@@ -1,7 +1,7 @@
 from tkinter import Button
 
 from src.storage.storage import Storage
-from src.utils.constants import Tip, MessageLevel
+from src.utils.constants import Tip
 from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
 from src.ui.tipster_selector import TipsterSelector
@@ -45,7 +45,7 @@ class InputContent(Content):
     def load(self):
         """ Loads tips from storage according to the UI state. """
         if Storage.is_empty():
-            self.set_message(MessageLevel.INFO, 'No race found.')
+            self.set_info_message('No race found.')
             return
 
         race_date, race_num = \
@@ -65,21 +65,21 @@ class InputContent(Content):
         try:
             tip = Storage.get_tip(race_date, race_num, source, tipster)
             if tip is None:
-                self.set_message(MessageLevel.INFO, msg_non_exist)
+                self.set_info_message(msg_non_exist)
                 return
 
             self.tipster_picker.set_confident(tip[Tip.CONFIDENT])
             self.horse_entry.set_values(tip[Tip.TIP])
-            self.set_message(MessageLevel.SUCCESS, msg_loaded)
+            self.set_success_message(msg_loaded)
         except RuntimeError as ex:
-            self.set_message(MessageLevel.ERROR, str(ex))
+            self.set_error_message(str(ex))
         except:
-            self.set_message(MessageLevel.ERROR, msg_fail)
+            self.set_error_message(msg_fail)
 
     def save(self):
         """ Save tips into storage according to the UI state. """
         if Storage.is_empty():
-            self.set_message(MessageLevel.ERROR, 'No race found.')
+            self.set_error_message('No race found.')
             return
 
         race_date, race_num = \
@@ -99,6 +99,6 @@ class InputContent(Content):
                 Tip.TIP: tip,
                 Tip.CONFIDENT: is_confident,
             })
-            self.set_message(MessageLevel.SUCCESS, msg_saved)
+            self.set_success_message(msg_saved)
         except:
-            self.set_message(MessageLevel.ERROR, msg_fail)
+            self.set_error_message(msg_fail)

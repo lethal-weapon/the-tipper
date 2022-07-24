@@ -6,8 +6,7 @@ from src.contents.content import Content
 from src.ui.race_selector import RaceSelector
 from src.analysis.roi import ROI, MIN_ROI_WIN_ODDS
 from src.analysis.roi_range import ROIRange
-from src.utils.constants import \
-    Race, Tip, Pool, Misc, Color, MessageLevel
+from src.utils.constants import Race, Tip, Pool, Misc, Color
 
 
 class PortfolioContent(Content):
@@ -16,6 +15,22 @@ class PortfolioContent(Content):
         super().__init__(parent_widget)
 
         self.header_frame = Frame(self.frame)
+        self.race_picker = None
+        self.build_page_header()
+        self.header_frame.pack()
+
+        self.content_frame = Frame(self.frame)
+        self.tips = None
+        self.odds = None
+        self.dividends = None
+        self.refresh_frame = None
+
+        self.refresh()
+        self.content_frame.pack()
+        self.pack_message()
+        self.frame.pack()
+
+    def build_page_header(self):
         self.race_picker = RaceSelector(
             self.header_frame,
             self.refresh,
@@ -23,34 +38,22 @@ class PortfolioContent(Content):
             10,
             LEFT
         )
-        self.result_link = Label(
+        result_link = Label(
             self.header_frame,
             text='Result',
             font='Times 16 underline',
             cursor='hand2',
         )
-        self.video_link = Label(
+        video_link = Label(
             self.header_frame,
             text='Replay',
             font='Times 16 underline',
             cursor='hand2',
         )
-        self.result_link.bind('<Button-1>', self.open_race_result_page)
-        self.video_link.bind('<Button-1>', self.play_race_replay)
-        self.result_link.pack(padx=15, side=LEFT)
-        self.video_link.pack(side=LEFT)
-        self.header_frame.pack()
-
-        self.content_frame = Frame(self.frame)
-        self.tips = None
-        self.odds = None
-        self.dividends = None
-        self.nested_frame = None
-
-        self.refresh()
-        self.content_frame.pack()
-        self.pack_message()
-        self.frame.pack()
+        result_link.bind('<Button-1>', self.open_race_result_page)
+        video_link.bind('<Button-1>', self.play_race_replay)
+        result_link.pack(padx=15, side=LEFT)
+        video_link.pack(side=LEFT)
 
     def play_race_replay(self, *e):
         race_date, race_num = self.race_picker.get_race_date_num()
@@ -63,16 +66,16 @@ class PortfolioContent(Content):
         webbrowser.open_new_tab(result_url)
 
     def refresh(self):
-        """ Recreate the contents according to the race date/num. """
-        if self.nested_frame:
-            self.nested_frame.pack_forget()
-            self.nested_frame.destroy()
+        """ Recreate the content according to the race date/num. """
+        if self.refresh_frame:
+            self.refresh_frame.pack_forget()
+            self.refresh_frame.destroy()
 
-        self.nested_frame = Frame(self.content_frame)
+        self.refresh_frame = Frame(self.content_frame)
         self.clear_message()
 
         if Storage.is_empty():
-            self.set_message(MessageLevel.INFO, 'No race found.')
+            self.set_info_message('No race found.')
             return
 
         race_date, race_num = self.race_picker.get_race_date_num()
@@ -81,29 +84,29 @@ class PortfolioContent(Content):
             race[Race.TIPS], race[Race.ODDS], race[Race.DIVIDENDS]
 
         if len(self.tips) == 0:
-            self.set_message(MessageLevel.INFO, 'No tips found.')
+            self.set_info_message('No tips found.')
             return
 
-        self.build_header()
-        self.build_body()
-        self.nested_frame.pack()
+        self.build_content_header()
+        self.build_content_body()
+        self.refresh_frame.pack()
 
-    def build_header(self):
+    def build_content_header(self):
         header_font = 'Times 16 bold'
         for i in range(1, 5):
-            Label(self.nested_frame, text=Misc.ORDINALS[i], font=header_font) \
+            Label(self.refresh_frame, text=Misc.ORDINALS[i], font=header_font) \
                 .grid(row=1, column=2 + i, padx=10, pady=5)
 
-        Label(self.nested_frame, text='') \
+        Label(self.refresh_frame, text='') \
             .grid(row=1, column=2 + 4 + 1, padx=10, pady=5)
 
         pools = [Pool.WIN, Pool.QPL, Pool.QIN, Pool.FCT]
         for pool in pools:
             index = 1 + pools.index(pool)
-            Label(self.nested_frame, text=pool, font=header_font) \
+            Label(self.refresh_frame, text=pool, font=header_font) \
                 .grid(row=1, column=2 + 4 + 1 + index, padx=10, pady=5)
 
-    def build_body(self):
+    def build_content_body(self):
         groups = {}
         for t in self.tips:
             if t[Tip.SOURCE] in groups:
@@ -113,7 +116,7 @@ class PortfolioContent(Content):
 
         tips_count = 0
         for source, unsorted_tips_list in groups.items():
-            Label(self.nested_frame, text=source, font='Times 14 italic') \
+            Label(self.refresh_frame, text=source, font='Times 14 italic') \
                 .grid(row=2 + tips_count, column=1, padx=10, pady=3)
 
             tips_list = sorted(unsorted_tips_list, key=lambda d: d[Tip.TIPSTER])
@@ -122,7 +125,7 @@ class PortfolioContent(Content):
                 row = 2 + tips_count + tips_list.index(t)
 
                 Label(
-                    self.nested_frame,
+                    self.refresh_frame,
                     text=tipster,
                     font='Times 14 bold',
                     fg=Color.BLUE if t[Tip.CONFIDENT] else Color.BLACK
@@ -131,7 +134,7 @@ class PortfolioContent(Content):
                 for h in t[Tip.TIP]:
                     col = 3 + t[Tip.TIP].index(h)
                     Label(
-                        self.nested_frame,
+                        self.refresh_frame,
                         text=str(h),
                         font=f'Times 14 {self.get_horse_num_font(h)}',
                         fg=self.get_horse_num_color(h),
@@ -147,7 +150,7 @@ class PortfolioContent(Content):
                         roi_text += f' [{roi_pair[1]}]'
 
                     Label(
-                        self.nested_frame,
+                        self.refresh_frame,
                         text=roi_text,
                         font='Times 14',
                         fg=self.get_roi_color(t, pool, roi_text)
@@ -155,7 +158,12 @@ class PortfolioContent(Content):
 
             tips_count += len(tips_list)
 
-    def get_roi_color(self, tip_obj: dict, pool: str, roi_text: str) -> str:
+    def get_roi_color(
+        self,
+        tip_obj: dict,
+        pool: str,
+        roi_text: str
+    ) -> str:
         # know the result and won
         if '[' in roi_text:
             actual_roi = roi_text.split(' ')[1].replace('[', '').replace(']', '')
@@ -170,10 +178,11 @@ class PortfolioContent(Content):
         return Color.BLACK
 
     def get_horse_num_font(self, horse_num: int) -> str:
-        if self.is_winner(horse_num) or self.is_second(horse_num):
-            return 'bold underline'
-        elif self.is_fourth(horse_num):
-            return 'bold'
+        if Pool.WIN in self.dividends:
+            if self.is_winner(horse_num) or self.is_second(horse_num):
+                return 'bold underline'
+            elif self.is_fourth(horse_num):
+                return 'bold'
         return ''
 
     def get_horse_num_color(self, horse_num: int) -> str:
@@ -185,26 +194,24 @@ class PortfolioContent(Content):
                 if win_odds >= MIN_ROI_WIN_ODDS:
                     return Color.ORANGE
 
-        if self.is_winner(horse_num):
-            return Color.GOLD
-        elif self.is_second(horse_num):
-            return Color.SILVER
-        elif self.is_third(horse_num):
-            return Color.BROWN
+        if Pool.WIN in self.dividends:
+            if self.is_winner(horse_num):
+                return Color.GOLD
+            elif self.is_second(horse_num):
+                return Color.SILVER
+            elif self.is_third(horse_num):
+                return Color.BROWN
+
         return Color.BLACK
 
     def is_winner(self, horse_num: int):
-        return Pool.WIN in self.dividends and \
-               str(horse_num) in self.dividends[Pool.WIN]
+        return str(horse_num) in self.dividends[Pool.WIN]
 
     def is_second(self, horse_num: int):
-        return Pool.QTT in self.dividends and \
-               horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][1]
+        return horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][1]
 
     def is_third(self, horse_num: int):
-        return Pool.QTT in self.dividends and \
-               horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][2]
+        return horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][2]
 
     def is_fourth(self, horse_num: int):
-        return Pool.QTT in self.dividends and \
-               horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][3]
+        return horse_num == self.dividends[Pool.QTT][0][Race.COMBINATION][3]

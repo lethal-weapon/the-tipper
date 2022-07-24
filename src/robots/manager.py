@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, date
+from datetime import date
 
 from src.robots.api import APIRobot
 from src.robots.pool import PoolRobot
@@ -10,11 +10,11 @@ from src.robots.forecast import ForecastOddsRobot
 from src.storage.storage import Storage
 from src.utils.constants import Time, Race
 from src.utils.general import \
-    get_thread_name, get_now, get_current_date_and_time
+    get_thread_name, get_current_date_and_time
 
 
 class RobotManager:
-    keep_working: False
+    keep_working = False
 
     robots: [APIRobot] = [
         PoolRobot(),
@@ -56,17 +56,8 @@ class RobotManager:
 
         while cls.keep_working:
             for race in races:
-                race_date, race_num, race_time, venue_code = \
-                    race[Race.RACE_DATE], race[Race.RACE_NUM], \
-                    race[Race.TIME], race[Race.VENUE]
-
-                # now = get_now()
-                # begin_time = datetime.fromisoformat(race_time)
-                #
-                # no need to make the calls if too early or too late
-                # if (begin_time - now > Time.TWO_HOURS) or \
-                #     (now - begin_time > Time.ONE_HOUR):
-                #     continue
+                race_date, race_num, venue_code = \
+                    race[Race.RACE_DATE], race[Race.RACE_NUM], race[Race.VENUE]
 
                 for robot in cls.robots:
                     robot.run(race_date, str(race_num), venue_code)
