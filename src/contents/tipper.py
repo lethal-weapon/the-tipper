@@ -37,29 +37,36 @@ class Tipper:
         portfolios = Tab(frame, callback, 'Portfolios')
         performance = Tab(frame, callback, 'Performance')
 
-        performance.select()
+        controls.select()
         cls.tabs = [controls, inputs, portfolios, performance]
 
         frame.pack()
 
     @classmethod
     def create_contents(cls):
+        """
+        Create/Recreate contents when app launches or new racecards get fetched.
+        """
+        for content in cls.contents:
+            content.pack_forget()
+            content.destroy()
+
         controls = Frame(cls.window)
         inputs = Frame(cls.window)
         portfolios = Frame(cls.window)
         performance = Frame(cls.window)
 
-        input_cont = InputContent(inputs)
+        InputContent(inputs)
         port_cont = PortfolioContent(portfolios)
-        perf_cont = PerformanceContent(performance)
-        contr_cont = ControlContent(
+        PerformanceContent(performance)
+        ControlContent(
             controls,
-            cls.recreate_input_content,
+            cls.create_contents,
             port_cont.refresh,
         )
 
         cls.contents = [controls, inputs, portfolios, performance]
-        performance.pack()
+        controls.pack()
 
     @classmethod
     def on_tab_clicked(cls, clicked_tab: Tab):
@@ -69,12 +76,3 @@ class Tipper:
                 cls.contents[i].pack_forget()
             else:
                 cls.contents[i].pack()
-
-    @classmethod
-    def recreate_input_content(cls):
-        cls.contents[1].pack_forget()
-        cls.contents[1].destroy()
-
-        new_input_frame = Frame(cls.window)
-        InputContent(new_input_frame)
-        cls.contents[1] = new_input_frame

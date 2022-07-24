@@ -19,11 +19,11 @@ class ControlContent(Content):
     def __init__(
         self,
         parent_widget,
-        recreate_input_content,
+        recreate_contents,
         refresh_portfolio_content,
     ):
         super().__init__(parent_widget)
-        self.recreate_input_content = recreate_input_content
+        self.recreate_contents = recreate_contents
         self.refresh_portfolio_content = refresh_portfolio_content
 
         self.info = None
@@ -192,7 +192,7 @@ class ControlContent(Content):
             self.race_date.set_options(
                 Storage.get_race_dates()[:RACE_DATE_OPTION_COUNT])
             self.enable_ui()
-            self.recreate_input_content()
+            self.recreate_contents()
 
     def on_dividend_fetched(self):
         selected_date = self.race_date.get_selected_option()
