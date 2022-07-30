@@ -1,6 +1,6 @@
 from src.utils.constants import Race, Pool
 
-MIN_ROI_WIN_ODDS = 10
+MIN_ROI_WIN_ODDS = 9
 
 
 class ROI:

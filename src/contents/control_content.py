@@ -192,10 +192,6 @@ class ControlContent(Content):
         if self.worker.is_alive():
             self.frame.after(250, self.check_race_card_worker)
         else:
-            self.update_info()
-            self.race_date.set_options(
-                Storage.get_race_dates()[:RACE_DATE_OPTION_COUNT])
-            self.enable_ui()
             self.recreate_contents()
 
     def on_dividend_fetched(self):
