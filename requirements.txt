@@ -6,6 +6,7 @@ charset-normalizer==2.0.12
 cryptography==37.0.2
 h11==0.13.0
 idna==3.3
+neo4j==4.4.0
 outcome==1.2.0
 pycparser==2.21
 pydantic==1.9.1

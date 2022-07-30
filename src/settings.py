@@ -20,19 +20,19 @@ class Settings(BaseSettings):
         env_file_encoding = SETTING_FILE_ENCODING
 
 
-class MongoSettings(BaseSettings):
+class Neo4jSettings(BaseSettings):
     URI: str = ''
     USERNAME: str = ''
     PASSWORD: str = ''
     DATABASE: str = ''
 
     class Config:
-        env_prefix = 'MONGO_'
+        env_prefix = 'NEO4J_'
         env_file = SETTING_FILE
         env_file_encoding = SETTING_FILE_ENCODING
 
 
-SETTINGS = namedtuple('settings', ['BASE', 'MONGO'])(
+SETTINGS = namedtuple('settings', ['BASE', 'NEO4J'])(
     Settings(),
-    MongoSettings(),
+    Neo4jSettings(),
 )
