@@ -37,7 +37,7 @@ class Tipper:
         portfolios = Tab(frame, callback, 'Portfolios')
         performance = Tab(frame, callback, 'Performance')
 
-        controls.select()
+        performance.select()
         cls.tabs = [controls, inputs, portfolios, performance]
 
         frame.pack()
@@ -66,7 +66,7 @@ class Tipper:
         )
 
         cls.contents = [controls, inputs, portfolios, performance]
-        controls.pack()
+        performance.pack()
 
     @classmethod
     def on_tab_clicked(cls, clicked_tab: Tab):
