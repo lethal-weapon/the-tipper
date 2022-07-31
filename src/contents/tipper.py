@@ -6,6 +6,7 @@ from src.contents.input_content import InputContent
 from src.contents.portfolio_content import PortfolioContent
 from src.contents.performance_content import PerformanceContent
 from src.utils.constants import Widget
+from src.utils.database import Database
 from src.settings import SETTINGS
 
 
@@ -25,7 +26,13 @@ class Tipper:
 
         cls.create_tabs()
         cls.create_contents()
+        cls.window.protocol('WM_DELETE_WINDOW', cls.on_closing)
         cls.window.mainloop()
+
+    @classmethod
+    def on_closing(cls):
+        cls.window.destroy()
+        Database.disconnect()
 
     @classmethod
     def create_tabs(cls):

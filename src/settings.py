@@ -5,6 +5,7 @@ from collections import namedtuple
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(CURRENT_DIR)
+QUERY_DIR = f'{PROJECT_DIR}/src/queries'
 STORAGE_DIR = f'{PROJECT_DIR}/data'
 SETTING_FILE = f'{PROJECT_DIR}/config/settings.env'
 SETTING_FILE_ENCODING = 'UTF-8'

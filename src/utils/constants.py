@@ -1,5 +1,7 @@
 from datetime import time, timedelta
 
+from src.settings import QUERY_DIR
+
 
 class Widget:
     WINDOW_WIDTH = 1000
@@ -133,3 +135,7 @@ MULTIPLE_HORSE_POOLS = [
     'FIRST 4',
     'QUARTET',
 ]
+
+
+class QueryFile:
+    JOCKEY_EARNING = f'{QUERY_DIR}/earnings-jockey.cypher'
