@@ -1,11 +1,11 @@
 // Jockey Earnings during a specified period, note that
 // this period should contain at least 3 race meetings
-// Input: startMeeting, endMeeting
+// Input: startDate, endDate
 
 // find out the earning for each jockey each race
 MATCH (j:Jockey)-[ride:RODE]->(:Horse)
-  WHERE ride.raceDate >= $startMeeting
-  AND ride.raceDate <= $endMeeting
+  WHERE ride.raceDate >= $startDate
+  AND ride.raceDate <= $endDate
 WITH j.nameEn AS jockey,
      ride.raceDate AS raceDate,
      ride.raceNum AS raceNum,
@@ -34,9 +34,9 @@ WITH jockey,
 WITH jockey, totalEarns,
      size(dayEarnings) AS rideDays,
      size([e IN dayEarnings WHERE e > 0]) AS earnDays,
-     size([e IN dayEarnings WHERE e > 0 AND e <= 7]) AS poor,
-     size([e IN dayEarnings WHERE e > 7 AND e <= 12]) AS regular,
-     size([e IN dayEarnings WHERE e > 12]) AS rich
+     size([e IN dayEarnings WHERE e > 0 AND e < 7]) AS poor,
+     size([e IN dayEarnings WHERE e >= 7 AND e < 12]) AS regular,
+     size([e IN dayEarnings WHERE e >= 12]) AS rich
 
 // this condition is used for excluding special jockeys
 // who only rode for a few days during a long period of time
