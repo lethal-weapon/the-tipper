@@ -71,3 +71,13 @@ def to_odds(dividend: str) -> float:
         return round(float(temp) / 10, 2)
     else:
         return round(float(temp.replace('/$1.0', '')), 2)
+
+
+def to_people_name(name: str) -> str:
+    copy = name
+    if ',' in name:
+        slices = name.replace(',', '').split(' ')
+        copy = f'{slices[1]} {slices[0]}'
+
+    slices = copy.split(' ')
+    return f'{slices[0][0]}. {slices[1]}'

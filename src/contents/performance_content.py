@@ -1,11 +1,10 @@
-import json
 from tkinter import Frame, Label, Radiobutton, StringVar, LEFT
 
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
-from src.utils.constants import Color, QueryFile
-from src.utils.database import Database
-from src.utils.cypher_converter import CypherConverter
+from src.storage.cache import Cache
+from src.utils.constants import Color
+from src.utils.converters import to_people_name
 
 PAGE_OPTIONS = {
     'Tipster': [
@@ -22,10 +21,8 @@ PAGE_OPTIONS = {
     ],
 }
 
-SEASON_DATES = {
-    '21/22': ('2021-09-05', '2022-07-16'),
-    '22/23': ('2022-09-11', '2023-07-16'),
-}
+HEADER_FONT = 'Times 14 bold'
+BODY_FONT = 'Times 12'
 
 
 class PerformanceContent(Content):
@@ -99,28 +96,25 @@ class PerformanceContent(Content):
             ).pack()
 
     def build_jockey_earning_content(self, option_value: str):
-        season = SEASON_DATES[option_value.split(' ')[1]]
-        params = {
-            '$startDate': CypherConverter.to_date(season[0]),
-            '$endDate': CypherConverter.to_date(season[1]),
-        }
-        records = Database.read_from_file(
-            QueryFile.JOCKEY_EARNING,
-            params
-        )
-        for record in records:
-            record_data = record.data()
-            print(json.dumps(record_data, sort_keys=False, indent=4))
+        season = option_value.split(' ')[1]
+        earnings = Cache.get_jockey_earnings_by_season(season)
+        headers = []
 
-        # {
-        #     "jockey": "Zac Purton",
-        #     "rideDays": 79,
-        #     "earnDays": 79,
-        #     "totalEarns": 933.3,
-        #     "earnDayAvg": 11.8,
-        #     "rideDayAvg": 11.8,
-        #     "realAvg": 11.8,
-        #     "poor": 0.22,
-        #     "regular": 0.39,
-        #     "rich": 0.39
-        # }
+        if len(earnings) > 0:
+            headers = [k for k in earnings[0].keys()]
+
+        for header in headers:
+            formatted_header = header[0].upper() + header[1:]
+            Label(self.content_frame, text=formatted_header, font=HEADER_FONT) \
+                .grid(row=1, column=1 + headers.index(header), padx=7, pady=5)
+
+        row = 1
+        for earning in earnings:
+            row += 1
+            for header in headers:
+                value = str(earning[header])
+                if 'jockey' in header:
+                    value = to_people_name(value)
+
+                Label(self.content_frame, text=value, font=BODY_FONT) \
+                    .grid(row=row, column=1 + headers.index(header), padx=7, pady=2)
