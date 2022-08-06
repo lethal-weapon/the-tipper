@@ -109,6 +109,10 @@ class Pool:
     WIN_PLA = 'WIN_PLA'
 
 
+class QueryFile:
+    JOCKEY_EARNING = f'{QUERY_DIR}/earnings-jockey.cypher'
+
+
 POOL_MAPPER = {
     'WIN': Pool.WIN,
     'PLACE': Pool.PLA,
@@ -136,6 +140,10 @@ MULTIPLE_HORSE_POOLS = [
     'QUARTET',
 ]
 
-
-class QueryFile:
-    JOCKEY_EARNING = f'{QUERY_DIR}/earnings-jockey.cypher'
+IGNORED_PEOPLE = [
+    'Jack Wong Ho-nam',
+    'Blake Shinn',
+    'Daniel Moor',
+    'Chad Schofield',
+    'Tony Piccone',
+]

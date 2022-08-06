@@ -3,7 +3,7 @@ from tkinter import Frame, Label, Radiobutton, StringVar, LEFT
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.cache import Cache
-from src.utils.constants import Color
+from src.utils.constants import Color, IGNORED_PEOPLE
 from src.utils.converters import to_people_name
 
 PAGE_OPTIONS = {
@@ -80,7 +80,7 @@ class PerformanceContent(Content):
 
         self.content_frame = Frame(self.frame)
         self.build_content_frame()
-        self.content_frame.pack(pady=15)
+        self.content_frame.pack(pady=10)
 
     def build_content_frame(self):
         option_key, option_value = \
@@ -106,7 +106,7 @@ class PerformanceContent(Content):
         for header in headers:
             formatted_header = header[0].upper() + header[1:]
             Label(self.content_frame, text=formatted_header, font=HEADER_FONT) \
-                .grid(row=1, column=1 + headers.index(header), padx=7, pady=5)
+                .grid(row=1, column=1 + headers.index(header), padx=6, pady=2)
 
         row = 1
         for earning in earnings:
@@ -114,7 +114,20 @@ class PerformanceContent(Content):
             for header in headers:
                 value = str(earning[header])
                 if 'jockey' in header:
+                    if value in IGNORED_PEOPLE:
+                        break
                     value = to_people_name(value)
 
-                Label(self.content_frame, text=value, font=BODY_FONT) \
-                    .grid(row=row, column=1 + headers.index(header), padx=7, pady=2)
+                Label(self.content_frame, text=value, font=BODY_FONT,
+                      fg=self.get_earning_color(header.lower(), value)) \
+                    .grid(row=row, column=1 + headers.index(header), padx=6)
+
+    @staticmethod
+    def get_earning_color(field: str, value: str) -> str:
+        if 'rich' in field and float(value) >= 0.4:
+            return Color.ORANGE
+
+        elif 'earndayavg' in field and float(value) >= 12:
+            return Color.RED
+
+        return Color.BLACK
