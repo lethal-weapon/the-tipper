@@ -24,6 +24,7 @@ WITH jockey, raceDate, raceNum, placing,
        WHEN placing = 1 THEN p.winOdds[0]
        WHEN placing = 2 THEN p.placeOdds[1]
        WHEN placing = 3 THEN p.placeOdds[2]
+       WHEN placing = 4 THEN 1
        ELSE 0
        END AS earning
 
