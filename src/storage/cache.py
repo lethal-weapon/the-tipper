@@ -4,7 +4,7 @@ from typing import Any
 
 from src.settings import CACHE_DIR
 from src.utils.general import get_now
-from src.utils.constants import QueryFile
+from src.utils.constants import QueryFile, VENUE_MAPPER
 from src.utils.database import Database
 from src.utils.cypher_converter import CypherConverter
 
@@ -79,6 +79,8 @@ class Cache:
             QueryFile.JOCKEY_PERFORMANCE
         )
         performance = [r.data() for r in records]
+        for p in performance:
+            p['venue'] = VENUE_MAPPER[p['venue']]
 
         cls.data[filename] = performance
         cls.write(filename, performance)

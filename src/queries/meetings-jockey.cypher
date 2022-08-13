@@ -5,7 +5,7 @@ MATCH (:Jockey)-[ride:RODE]->(:Horse)
   WHERE ride.placing IS NOT NULL
 WITH DISTINCT ride.raceDate AS raceDate
   ORDER BY raceDate DESC
-  LIMIT 10
+  LIMIT 25
 
 MATCH (j:Jockey)-[ride:RODE]->(:Horse)
   WHERE ride.raceDate = raceDate
@@ -56,11 +56,7 @@ MATCH (r:Race)
   WHERE r.date = raceDate
   AND r.dayOrdinal = 1
 WITH raceDate, dayEarns, data,
-     CASE
-       WHEN r.venue = '沙田' THEN 'ST'
-       WHEN r.venue = '跑馬地' THEN 'HV'
-       ELSE 'XX'
-       END AS venue
+     r.venue AS venue
 
 MATCH (r:Race)
   WHERE r.date = raceDate

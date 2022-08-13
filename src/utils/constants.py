@@ -141,6 +141,11 @@ MULTIPLE_HORSE_POOLS = [
     'QUARTET',
 ]
 
+VENUE_MAPPER = {
+    '沙田': 'ST',
+    '跑馬地': 'HV',
+}
+
 IGNORED_PEOPLE = [
     'Jack Wong Ho-nam',
     'Blake Shinn',
@@ -154,22 +159,18 @@ JOCKEY_RANKINGS = [
     'Moreira',
     'Teetan',
     'Badel',
-    '---',
     'Chadwick',
     'Ho',
     'Leung',
     'Poon',
-    '---',
     'Maia',
     'Ferraris',
     'Hewitson',
     'Currie',
-    '---',
     'Bentley',
     'Hamelin',
     'Borges',
     'Chau',
-    '---',
     'Chan',
     'Yeung',
     'Mo',

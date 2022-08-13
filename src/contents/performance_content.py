@@ -1,10 +1,12 @@
-from tkinter import Frame, Label, Radiobutton, StringVar, LEFT
+from operator import itemgetter
+from tkinter import Frame, Label, Radiobutton, Button, StringVar, LEFT
 
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.cache import Cache
-from src.utils.constants import Color, IGNORED_PEOPLE
 from src.utils.converters import to_people_name
+from src.utils.constants import \
+    Color, IGNORED_PEOPLE, JOCKEY_RANKINGS, State
 
 PAGE_OPTIONS = {
     'Tipster': [
@@ -33,6 +35,9 @@ class PerformanceContent(Content):
         self.header_frame = Frame(self.frame)
         self.option_key = StringVar()
         self.option_list = None
+        self.active_meeting_slice = 0
+        self.btn_next = None
+        self.btn_prior = None
         self.build_header_frame()
         self.header_frame.pack()
 
@@ -66,6 +71,22 @@ class PerformanceContent(Content):
             self.update_content_frame,
             {'side': LEFT, 'padx': 15},
         )
+        self.btn_next = Button(
+            self.header_frame, text='Next', command=self.to_next_meeting)
+        self.btn_prior = Button(
+            self.header_frame, text='Prior', command=self.to_prior_meeting)
+        self.btn_next.pack(padx=15, side=LEFT)
+        self.btn_prior.pack(padx=15, side=LEFT)
+
+    def to_next_meeting(self, *e):
+        if self.active_meeting_slice > 0:
+            self.active_meeting_slice -= 1
+            self.update_content_frame()
+
+    def to_prior_meeting(self, *e):
+        if self.active_meeting_slice < 22:
+            self.active_meeting_slice += 1
+            self.update_content_frame()
 
     def update_option_list(self, *e):
         self.option_list.set_options(
@@ -85,11 +106,15 @@ class PerformanceContent(Content):
     def build_content_frame(self):
         option_key, option_value = \
             self.option_key.get(), self.option_list.get_selected_option()
+        self.btn_next.configure(state=State.DISABLE)
+        self.btn_prior.configure(state=State.DISABLE)
 
         if option_key == 'Jockey':
             if 'Earning' in option_value:
                 self.build_jockey_earning_content(option_value)
             elif 'Meeting' in option_value:
+                self.btn_next.configure(state=State.NORMAL)
+                self.btn_prior.configure(state=State.NORMAL)
                 self.build_jockey_performance_content()
         else:
             Label(
@@ -137,3 +162,68 @@ class PerformanceContent(Content):
 
     def build_jockey_performance_content(self):
         performance = Cache.get_jockey_performance_by_meeting()
+        jockeys, names = [], {}
+        placings = {
+            'wins': 'W',
+            'seconds': 'Q',
+            'thirds': 'P',
+            'fourths': 'F',
+            'rides': 'R',
+        }
+
+        for p in performance:
+            for d in p['data']:
+                name = to_people_name(d['jockey'])
+                surname = name.split(' ')[-1]
+                if surname in JOCKEY_RANKINGS:
+                    names[name] = JOCKEY_RANKINGS.index(surname)
+
+        for name, index in names.items():
+            jockeys.append((name, index))
+
+        jockeys = sorted(jockeys, key=itemgetter(1))
+        for j in jockeys:
+            Label(self.content_frame, text=j[0], font=BODY_FONT) \
+                .grid(row=2 + jockeys.index(j), column=1, padx=15)
+
+        actives = performance[self.active_meeting_slice:]
+        for p in actives:
+            index = actives.index(p)
+            col = 2 + index
+            if index > 2:
+                break
+
+            header = f'{p["raceDate"]} {p["venue"]} ' \
+                     f'{p["races"]}R  ${p["dayEarns"]}'
+            Label(self.content_frame, text=header, font=HEADER_FONT) \
+                .grid(row=1, column=col, padx=15, pady=2)
+
+            for j in jockeys:
+                row = 2 + jockeys.index(j)
+                for d in p['data']:
+                    if to_people_name(d['jockey']) != j[0]:
+                        continue
+
+                    frame = Frame(self.content_frame)
+                    for k, v in placings.items():
+                        text = f'{d[k]}{v}' if d[k] != 0 else ''
+                        column = [x for x in placings.keys()].index(k)
+                        color = self.get_performance_color(text)
+                        Label(frame, text=text, font=BODY_FONT, fg=color) \
+                            .grid(row=1, column=1 + column, padx=2)
+
+                    earnings = f'${d["earnings"]}' if d['earnings'] > 0 else ''
+                    Label(frame, text=earnings, font=BODY_FONT) \
+                        .grid(row=1, column=1 + len(placings), padx=2)
+                    frame.grid(row=row, column=col, padx=15)
+
+    @staticmethod
+    def get_performance_color(text: str) -> str:
+        if 'W' in text:
+            return Color.GOLD
+        elif 'Q' in text:
+            return Color.SILVER
+        elif 'P' in text:
+            return Color.BROWN
+
+        return Color.BLACK
