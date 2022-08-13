@@ -66,3 +66,20 @@ class Cache:
         cls.data[filename] = earnings
         cls.write(filename, earnings)
         return earnings
+
+    @classmethod
+    def get_jockey_performance_by_meeting(cls) -> [dict]:
+        slices = QueryFile.JOCKEY_PERFORMANCE.split('/')
+        filename = slices[-1].replace('cypher', 'json')
+
+        if filename in cls.data:
+            return cls.data[filename]
+
+        records = Database.read_from_file(
+            QueryFile.JOCKEY_PERFORMANCE
+        )
+        performance = [r.data() for r in records]
+
+        cls.data[filename] = performance
+        cls.write(filename, performance)
+        return performance

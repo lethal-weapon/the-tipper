@@ -111,6 +111,7 @@ class Pool:
 
 class QueryFile:
     JOCKEY_EARNING = f'{QUERY_DIR}/earnings-jockey.cypher'
+    JOCKEY_PERFORMANCE = f'{QUERY_DIR}/meetings-jockey.cypher'
 
 
 POOL_MAPPER = {
@@ -146,4 +147,32 @@ IGNORED_PEOPLE = [
     'Daniel Moor',
     'Chad Schofield',
     'Tony Piccone',
+]
+
+JOCKEY_RANKINGS = [
+    'Purton',
+    'Moreira',
+    'Teetan',
+    'Badel',
+    '---',
+    'Chadwick',
+    'Ho',
+    'Leung',
+    'Poon',
+    '---',
+    'Maia',
+    'Ferraris',
+    'Hewitson',
+    'Currie',
+    '---',
+    'Bentley',
+    'Hamelin',
+    'Borges',
+    'Chau',
+    '---',
+    'Chan',
+    'Yeung',
+    'Mo',
+    'Wong',
+    'Lai',
 ]

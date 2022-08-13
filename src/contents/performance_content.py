@@ -15,9 +15,9 @@ PAGE_OPTIONS = {
         'All times',
     ],
     'Jockey': [
+        'Meeting',
         'Earning 21/22',
         'Earning 22/23',
-        'Meeting',
     ],
 }
 
@@ -86,8 +86,11 @@ class PerformanceContent(Content):
         option_key, option_value = \
             self.option_key.get(), self.option_list.get_selected_option()
 
-        if option_key == 'Jockey' and 'Earning' in option_value:
-            self.build_jockey_earning_content(option_value)
+        if option_key == 'Jockey':
+            if 'Earning' in option_value:
+                self.build_jockey_earning_content(option_value)
+            elif 'Meeting' in option_value:
+                self.build_jockey_performance_content()
         else:
             Label(
                 self.content_frame,
@@ -131,3 +134,6 @@ class PerformanceContent(Content):
             return Color.RED
 
         return Color.BLACK
+
+    def build_jockey_performance_content(self):
+        performance = Cache.get_jockey_performance_by_meeting()
