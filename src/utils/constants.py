@@ -110,8 +110,8 @@ class Pool:
 
 
 class QueryFile:
-    JOCKEY_EARNING = f'{QUERY_DIR}/earnings-jockey.cypher'
-    JOCKEY_PERFORMANCE = f'{QUERY_DIR}/meetings-jockey.cypher'
+    EARNINGS = f'{QUERY_DIR}/earnings.cypher'
+    MEETINGS = f'{QUERY_DIR}/meetings.cypher'
 
 
 POOL_MAPPER = {
@@ -147,11 +147,13 @@ VENUE_MAPPER = {
 }
 
 IGNORED_PEOPLE = [
-    'Jack Wong Ho-nam',
-    'Blake Shinn',
-    'Daniel Moor',
-    'Chad Schofield',
-    'Tony Piccone',
+    'D. Ferraris',
+    'P. OSullivan',
+    'J. Wong',
+    'B. Shinn',
+    'D. Moor',
+    'C. Schofield',
+    'T. Piccone',
 ]
 
 JOCKEY_RANKINGS = [
@@ -176,4 +178,27 @@ JOCKEY_RANKINGS = [
     'Mo',
     'Wong',
     'Lai',
+]
+
+TRAINER_RANKINGS = [
+    'Lor',
+    'Size',
+    'Cruz',
+    'Whyte',
+    'Yiu',
+    'Lui',
+    'Fownes',
+    'Shum',
+    'Hall',
+    'Hayes',
+    'Yung',
+    'So',
+    'Man',
+    'Ting',
+    'Yip',
+    'Gibson',
+    'Millard',
+    'Chang',
+    'Tsui',
+    'Ho',
 ]

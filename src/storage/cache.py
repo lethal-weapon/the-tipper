@@ -44,10 +44,15 @@ class Cache:
             print(f'Error while writing data to {path}: {ex}')
 
     @classmethod
-    def get_jockey_earnings_by_season(cls, season: str) -> [dict]:
-        slices = QueryFile.JOCKEY_EARNING.split('/')
+    def get_earnings_by_season(
+        cls,
+        person_type: str,
+        season: str
+    ) -> [dict]:
+
+        slices = QueryFile.EARNINGS.split('/')
         filename = slices[-1] \
-            .replace('.', f'-{season.replace("/", "-")}.') \
+            .replace('.', f'-{person_type}-{season.replace("/", "-")}.') \
             .replace('cypher', 'json')
 
         if filename in cls.data:
@@ -57,10 +62,10 @@ class Cache:
             '$startDate': CypherConverter.to_date(SEASONS[season][0]),
             '$endDate': CypherConverter.to_date(SEASONS[season][1]),
         }
-        records = Database.read_from_file(
-            QueryFile.JOCKEY_EARNING,
-            params
-        )
+        if person_type == 'trainer':
+            params['RODE'] = 'TRAINED'
+
+        records = Database.read_from_file(QueryFile.EARNINGS, params)
         earnings = [r.data() for r in records]
 
         cls.data[filename] = earnings
@@ -68,16 +73,21 @@ class Cache:
         return earnings
 
     @classmethod
-    def get_jockey_performance_by_meeting(cls) -> [dict]:
-        slices = QueryFile.JOCKEY_PERFORMANCE.split('/')
-        filename = slices[-1].replace('cypher', 'json')
+    def get_performance_by_meeting(cls, person_type: str) -> [dict]:
+
+        slices = QueryFile.MEETINGS.split('/')
+        filename = slices[-1] \
+            .replace('.', f'-{person_type}.') \
+            .replace('cypher', 'json')
 
         if filename in cls.data:
             return cls.data[filename]
 
-        records = Database.read_from_file(
-            QueryFile.JOCKEY_PERFORMANCE
-        )
+        params = None
+        if person_type == 'trainer':
+            params = {'RODE': 'TRAINED'}
+
+        records = Database.read_from_file(QueryFile.MEETINGS, params)
         performance = [r.data() for r in records]
         for p in performance:
             p['venue'] = VENUE_MAPPER[p['venue']]

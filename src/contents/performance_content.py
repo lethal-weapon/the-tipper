@@ -4,9 +4,8 @@ from tkinter import Frame, Label, Radiobutton, Button, StringVar, LEFT
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
 from src.storage.cache import Cache
-from src.utils.converters import to_people_name
 from src.utils.constants import \
-    Color, IGNORED_PEOPLE, JOCKEY_RANKINGS, State
+    Color, State, IGNORED_PEOPLE, JOCKEY_RANKINGS, TRAINER_RANKINGS
 
 PAGE_OPTIONS = {
     'Tipster': [
@@ -17,6 +16,11 @@ PAGE_OPTIONS = {
         'All times',
     ],
     'Jockey': [
+        'Meeting',
+        'Earning 21/22',
+        'Earning 22/23',
+    ],
+    'Trainer': [
         'Meeting',
         'Earning 21/22',
         'Earning 22/23',
@@ -84,7 +88,7 @@ class PerformanceContent(Content):
             self.update_content_frame()
 
     def to_prior_meeting(self, *e):
-        if self.active_meeting_slice < 22:
+        if self.active_meeting_slice < 7:
             self.active_meeting_slice += 1
             self.update_content_frame()
 
@@ -109,13 +113,13 @@ class PerformanceContent(Content):
         self.btn_next.configure(state=State.DISABLE)
         self.btn_prior.configure(state=State.DISABLE)
 
-        if option_key == 'Jockey':
+        if option_key in ['Jockey', 'Trainer']:
             if 'Earning' in option_value:
-                self.build_jockey_earning_content(option_value)
+                self.build_earning_content(option_key, option_value)
             elif 'Meeting' in option_value:
                 self.btn_next.configure(state=State.NORMAL)
                 self.btn_prior.configure(state=State.NORMAL)
-                self.build_jockey_performance_content()
+                self.build_meeting_performance_content(option_key)
         else:
             Label(
                 self.content_frame,
@@ -123,9 +127,14 @@ class PerformanceContent(Content):
                 font='Times 14',
             ).pack()
 
-    def build_jockey_earning_content(self, option_value: str):
+    def build_earning_content(
+        self,
+        option_key: str,
+        option_value: str,
+    ):
         season = option_value.split(' ')[1]
-        earnings = Cache.get_jockey_earnings_by_season(season)
+        person_type = option_key.lower()
+        earnings = Cache.get_earnings_by_season(person_type, season)
         headers = []
 
         if len(earnings) > 0:
@@ -141,67 +150,69 @@ class PerformanceContent(Content):
             row += 1
             for header in headers:
                 value = str(earning[header])
-                if 'jockey' in header:
-                    if value in IGNORED_PEOPLE:
-                        break
-                    value = to_people_name(value)
+                if header == 'person' and value in IGNORED_PEOPLE:
+                    break
 
                 Label(self.content_frame, text=value, font=BODY_FONT,
-                      fg=self.get_earning_color(header.lower(), value)) \
+                      fg=self.get_earning_color(person_type, header.lower(), value)) \
                     .grid(row=row, column=1 + headers.index(header), padx=6)
 
     @staticmethod
-    def get_earning_color(field: str, value: str) -> str:
-        if 'rich' in field and float(value) >= 0.4:
-            return Color.ORANGE
+    def get_earning_color(person_type: str, field: str, value: str) -> str:
+        if 'rich' in field:
+            if (person_type == 'jockey' and float(value) >= 0.4) or \
+                (person_type == 'trainer' and float(value) >= 0.3):
+                return Color.ORANGE
 
-        elif 'earndayavg' in field and float(value) >= 12:
-            return Color.RED
+        elif 'earndayavg' in field:
+            if (person_type == 'jockey' and float(value) >= 12) or \
+                (person_type == 'trainer' and float(value) >= 11):
+                return Color.RED
 
         return Color.BLACK
 
-    def build_jockey_performance_content(self):
-        performance = Cache.get_jockey_performance_by_meeting()
-        jockeys, names = [], {}
+    def build_meeting_performance_content(self, option_key: str):
+        person_type = option_key.lower()
+        performance = Cache.get_performance_by_meeting(person_type)
+        persons = []
         placings = {
             'wins': 'W',
             'seconds': 'Q',
             'thirds': 'P',
             'fourths': 'F',
-            'rides': 'R',
+            'engagements': 'E',
         }
 
         for p in performance:
             for d in p['data']:
-                name = to_people_name(d['jockey'])
+                name = d['person']
                 surname = name.split(' ')[-1]
-                if surname in JOCKEY_RANKINGS:
-                    names[name] = JOCKEY_RANKINGS.index(surname)
+                if person_type == 'jockey' and surname in JOCKEY_RANKINGS:
+                    persons.append((name, JOCKEY_RANKINGS.index(surname)))
+                elif person_type == 'trainer' and surname in TRAINER_RANKINGS:
+                    persons.append((name, TRAINER_RANKINGS.index(surname)))
 
-        for name, index in names.items():
-            jockeys.append((name, index))
-
-        jockeys = sorted(jockeys, key=itemgetter(1))
-        for j in jockeys:
-            Label(self.content_frame, text=j[0], font=BODY_FONT) \
-                .grid(row=2 + jockeys.index(j), column=1, padx=15)
+        persons = sorted(persons, key=itemgetter(1))
+        for p in persons:
+            Label(self.content_frame, text=p[0], font=BODY_FONT) \
+                .grid(row=2 + persons.index(p), column=1, padx=15)
 
         actives = performance[self.active_meeting_slice:]
-        for p in actives:
-            index = actives.index(p)
+        for m in actives:
+            index = actives.index(m)
             col = 2 + index
             if index > 2:
                 break
 
-            header = f'{p["raceDate"]} {p["venue"]} ' \
-                     f'{p["races"]}R  ${p["dayEarns"]}'
+            header = f'{m["meeting"]} {m["venue"]} ' \
+                     f'{m["races"]}R  ${m["turnover"]}'
             Label(self.content_frame, text=header, font=HEADER_FONT) \
                 .grid(row=1, column=col, padx=15, pady=2)
 
-            for j in jockeys:
-                row = 2 + jockeys.index(j)
-                for d in p['data']:
-                    if to_people_name(d['jockey']) != j[0]:
+            for p in persons:
+                row = 2 + persons.index(p)
+                for d in m['data']:
+                    if d['person'] != p[0]:
                         continue
 
                     frame = Frame(self.content_frame)
