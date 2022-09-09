@@ -12,8 +12,8 @@ SETTING_FILE = f'{PROJECT_DIR}/config/settings.env'
 SETTING_FILE_ENCODING = 'UTF-8'
 
 
-class Settings(BaseSettings):
-    APP: str = 'The Tipper'
+class AppSettings(BaseSettings):
+    NAME: str = 'The Tipper'
     TIMEZONE: object = pytz.FixedOffset(480)
 
     class Config:
@@ -34,7 +34,7 @@ class Neo4jSettings(BaseSettings):
         env_file_encoding = SETTING_FILE_ENCODING
 
 
-SETTINGS = namedtuple('settings', ['BASE', 'NEO4J'])(
-    Settings(),
+SETTINGS = namedtuple('settings', ['APP', 'NEO4J'])(
+    AppSettings(),
     Neo4jSettings(),
 )

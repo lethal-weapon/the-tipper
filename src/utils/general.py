@@ -9,7 +9,7 @@ def get_thread_name() -> str:
 
 
 def get_now() -> datetime:
-    return datetime.now(tz=SETTINGS.BASE.TIMEZONE)
+    return datetime.now(tz=SETTINGS.APP.TIMEZONE)
 
 
 def get_current_date() -> date:

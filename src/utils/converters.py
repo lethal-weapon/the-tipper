@@ -37,7 +37,7 @@ def to_race_time(race_date: str, race_time: str) -> str:
         the_time.hour,
         the_time.minute,
         the_time.second,
-        tzinfo=SETTINGS.BASE.TIMEZONE,
+        tzinfo=SETTINGS.APP.TIMEZONE,
     ).isoformat()
 
 
