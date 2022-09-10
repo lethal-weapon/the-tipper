@@ -15,6 +15,7 @@ TIPSTER_SOURCES = {
         'Anthony',
         'Oscar',
         'KC',
+        'Ping',
     ],
     'Newspaper': [
         'Daily',
