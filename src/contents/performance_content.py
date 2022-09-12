@@ -28,7 +28,7 @@ PAGE_OPTIONS = {
 }
 
 HEADER_FONT = 'Times 14 bold'
-BODY_FONT = 'Times 12'
+BODY_FONT = 'Times 13'
 
 
 class PerformanceContent(Content):
@@ -143,7 +143,7 @@ class PerformanceContent(Content):
         for header in headers:
             formatted_header = header[0].upper() + header[1:]
             Label(self.content_frame, text=formatted_header, font=HEADER_FONT) \
-                .grid(row=1, column=1 + headers.index(header), padx=6, pady=2)
+                .grid(row=1, column=1 + headers.index(header), padx=6, pady=5)
 
         row = 1
         for earning in earnings:
@@ -155,7 +155,7 @@ class PerformanceContent(Content):
 
                 Label(self.content_frame, text=value, font=BODY_FONT,
                       fg=self.get_earning_color(person_type, header.lower(), value)) \
-                    .grid(row=row, column=1 + headers.index(header), padx=6)
+                    .grid(row=row, column=1 + headers.index(header), padx=6, pady=2)
 
     @staticmethod
     def get_earning_color(person_type: str, field: str, value: str) -> str:
@@ -194,19 +194,19 @@ class PerformanceContent(Content):
         persons = sorted(persons, key=itemgetter(1))
         for p in persons:
             Label(self.content_frame, text=p[0], font=BODY_FONT) \
-                .grid(row=2 + persons.index(p), column=1, padx=15)
+                .grid(row=2 + persons.index(p), column=1, padx=15, pady=2)
 
         actives = performance[self.active_meeting_slice:]
         for m in actives:
             index = actives.index(m)
             col = 2 + index
-            if index > 2:
+            if index > 4:
                 break
 
             header = f'{m["meeting"]} {m["venue"]} ' \
                      f'{m["races"]}R  ${m["turnover"]}'
             Label(self.content_frame, text=header, font=HEADER_FONT) \
-                .grid(row=1, column=col, padx=15, pady=2)
+                .grid(row=1, column=col, padx=15, pady=5)
 
             for p in persons:
                 row = 2 + persons.index(p)
@@ -225,7 +225,7 @@ class PerformanceContent(Content):
                     earnings = f'${d["earnings"]}' if d['earnings'] > 0 else ''
                     Label(frame, text=earnings, font=BODY_FONT) \
                         .grid(row=1, column=1 + len(placings), padx=2)
-                    frame.grid(row=row, column=col, padx=15)
+                    frame.grid(row=row, column=col, padx=15, pady=2)
 
     @staticmethod
     def get_performance_color(text: str) -> str:

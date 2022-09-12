@@ -37,7 +37,7 @@ class Tab:
         self.canvas.bind('<Button-1>', self.select)
         self.canvas.pack(
             side=LEFT,
-            padx=10,
+            padx=15,
             pady=15,
         )
 

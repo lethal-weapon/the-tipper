@@ -4,11 +4,11 @@ from src.settings import QUERY_DIR
 
 
 class Widget:
-    WINDOW_WIDTH = 1000
-    WINDOW_HEIGHT = 780
+    WINDOW_WIDTH = 1360
+    WINDOW_HEIGHT = 880
 
-    INITIAL_X = 200
-    INITIAL_Y = 100
+    INITIAL_X = 1
+    INITIAL_Y = 0
 
     TAB_WIDTH = 200
     TAB_HEIGHT = 50

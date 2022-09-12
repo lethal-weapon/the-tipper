@@ -21,7 +21,7 @@ class Tipper:
         cls.window.resizable(False, False)
         cls.window.geometry(
             f'{Widget.WINDOW_WIDTH}x{Widget.WINDOW_HEIGHT}'
-            f'+{Widget.INITIAL_X}+{Widget.INITIAL_Y}'
+            f'-{Widget.INITIAL_X}+{Widget.INITIAL_Y}'
         )
 
         cls.create_tabs()

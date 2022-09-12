@@ -20,7 +20,7 @@ class RaceSelector:
 
         font_style = 'Times 16 italic'
         regular_style = {'side': LEFT, 'padx': 10}
-        button_style = {'side': RIGHT, 'padx': 5}
+        button_style = {'side': RIGHT, 'padx': 10}
 
         Label(frame, text='Meeting', font=font_style).pack(regular_style)
         self.race_date = Dropdown(

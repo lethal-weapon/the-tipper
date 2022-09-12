@@ -1,5 +1,5 @@
 from threading import Thread
-from datetime import datetime, timedelta
+from datetime import datetime
 from tkinter import Frame, Label, Button, LEFT
 
 from src.ui.dropdown import Dropdown
@@ -48,23 +48,23 @@ class ControlContent(Content):
             info_frame,
             text='Next Meeting:',
             font='Times 18 italic',
-        ).pack(side=LEFT, padx=30)
+        ).pack(side=LEFT, padx=40)
         self.info = Label(
             info_frame,
             text='',
             font='Times 18 bold',
         )
         self.info.pack(side=LEFT)
-        info_frame.pack(pady=40)
+        info_frame.pack(pady=60)
 
     def build_button_frame(self):
         button_frame = Frame(self.frame)
         for i in range(1, 4):
             Label(button_frame, text=f'{i}.', font='Times 18') \
-                .grid(row=i, column=1, padx=20, pady=15)
+                .grid(row=i, column=1, padx=40, pady=30)
             if i == 3:
                 Label(button_frame, text='Odds & Pools', font='Times 20 bold') \
-                    .grid(row=i, column=2, padx=20, pady=15)
+                    .grid(row=i, column=2, padx=40, pady=30)
 
         button_options = [
             {
@@ -105,8 +105,8 @@ class ControlContent(Content):
             button.grid(
                 row=option['row'],
                 column=option['column'],
-                padx=20,
-                pady=15,
+                padx=40,
+                pady=30,
             )
             if option['row'] == 1:
                 self.btn_card = button
@@ -125,8 +125,8 @@ class ControlContent(Content):
             lambda e: None,
             {},
         )
-        date_wrapper.grid(row=2, column=3, padx=20, pady=15)
-        button_frame.pack(pady=40)
+        date_wrapper.grid(row=2, column=3, padx=40, pady=30)
+        button_frame.pack(pady=50)
 
     def update_info(self):
         if Storage.is_empty():
@@ -146,7 +146,7 @@ class ControlContent(Content):
 
         if race_date == curr_date:
             date_part = 'Today'
-        elif race_date - curr_date == timedelta(days=1):
+        elif race_date - curr_date == Time.ONE_DAY:
             date_part = 'Tomorrow'
         else:
             date_part = f'{race_date.strftime("%A")[:3]}  {race_date}'
