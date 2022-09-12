@@ -60,7 +60,7 @@ class PerformanceContent(Content):
                 font='Times 16 bold',
             ).pack(padx=15, side=LEFT)
 
-        self.option_key.set('Jockey')
+        self.option_key.set('Tipster')
 
         Label(
             self.header_frame,
@@ -186,11 +186,10 @@ class PerformanceContent(Content):
         for p in performance:
             for d in p['data']:
                 name = d['person']
-                surname = name.split(' ')[-1]
-                if person_type == 'jockey' and surname in JOCKEY_RANKINGS:
-                    persons.append((name, JOCKEY_RANKINGS.index(surname)))
-                elif person_type == 'trainer' and surname in TRAINER_RANKINGS:
-                    persons.append((name, TRAINER_RANKINGS.index(surname)))
+                if person_type == 'jockey' and name in JOCKEY_RANKINGS:
+                    persons.append((name, JOCKEY_RANKINGS.index(name)))
+                elif person_type == 'trainer' and name in TRAINER_RANKINGS:
+                    persons.append((name, TRAINER_RANKINGS.index(name)))
 
         persons = sorted(persons, key=itemgetter(1))
         for p in persons:
