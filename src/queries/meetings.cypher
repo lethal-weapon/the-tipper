@@ -2,14 +2,12 @@
 // Replace 'RODE' with 'TRAINED' for trainers
 
 MATCH (p)-[rel:RODE]->(:Horse)
-  WHERE rel.placing IS NOT NULL
 WITH DISTINCT rel.raceDate AS raceDate
   ORDER BY raceDate DESC
-  LIMIT 10
+  LIMIT 5
 
 MATCH (p)-[rel:RODE]->(:Horse)
   WHERE rel.raceDate = raceDate
-  AND rel.placing > 0
 WITH p.nameEnAbbr AS person,
      rel.raceDate AS raceDate,
      rel.raceNum AS raceNum,
@@ -18,17 +16,14 @@ WITH p.nameEnAbbr AS person,
 MATCH (p:Pool)
   WHERE p.raceDate = raceDate
   AND p.raceNum = raceNum
-  AND p.winOdds IS NOT NULL
 WITH person, raceDate, raceNum, placing,
      CASE
        WHEN placing = 1 THEN p.winOdds[0]
        WHEN placing = 2 THEN p.placeOdds[1]
        WHEN placing = 3 THEN p.placeOdds[2]
-     //         WHEN placing = 4 THEN 1
        ELSE 0
        END AS earning
 
-//
 WITH person, raceDate,
      collect(placing) AS placings,
      round(sum(earning), 1, 'HALF_UP') AS earnings
@@ -52,7 +47,7 @@ WITH raceDate,
        fourths:     fourths
      }) AS data
 
-// gather basic race day info
+// gather basic meeting info
 MATCH (r:Race)
   WHERE r.date = raceDate
   AND r.dayOrdinal = 1

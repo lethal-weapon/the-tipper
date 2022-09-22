@@ -8,5 +8,5 @@ if __name__ == '__main__':
     Database.connect()
     Cache.initialize()
     Storage.initialize()
-    ROIRange.initialize()
+    # ROIRange.initialize()
     Tipper.launch()
