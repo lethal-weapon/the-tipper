@@ -1,5 +1,4 @@
-// Person earnings during a specified period note that
-// this period should contain at least 3 race meetings
+// Person earnings during a specified period
 // Replace 'RODE' with 'TRAINED' for trainers
 // Input: startDate, endDate
 
@@ -40,9 +39,8 @@ WITH person, totalEarns,
      size([e IN dayEarnings WHERE e >= 7 AND e < 12]) AS normal,
      size([e IN dayEarnings WHERE e >= 12]) AS rich
 
-// this condition is used for excluding special persons
-// who only engage for a few days during a long period of time
-  WHERE engageDays >= 3
+// only return the people who ran top 3 at least once
+  WHERE earnDays > 0
 
 WITH person, engageDays, earnDays,
      round(totalEarns, 1, 'HALF_UP') AS totalEarns,
