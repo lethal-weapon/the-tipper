@@ -46,6 +46,7 @@ class Cache:
     @classmethod
     def get_earnings_by_season(
         cls,
+        clear_cache: bool,
         person_type: str,
         season: str
     ) -> [dict]:
@@ -54,6 +55,9 @@ class Cache:
         filename = slices[-1] \
             .replace('.', f'-{person_type}-{season.replace("/", "-")}.') \
             .replace('cypher', 'json')
+
+        if clear_cache:
+            del cls.data[filename]
 
         if filename in cls.data:
             return cls.data[filename]
@@ -73,12 +77,19 @@ class Cache:
         return earnings
 
     @classmethod
-    def get_performance_by_meeting(cls, person_type: str) -> [dict]:
+    def get_performance_by_meeting(
+        cls,
+        clear_cache: bool,
+        person_type: str
+    ) -> [dict]:
 
         slices = QueryFile.MEETINGS.split('/')
         filename = slices[-1] \
             .replace('.', f'-{person_type}.') \
             .replace('cypher', 'json')
+
+        if clear_cache:
+            del cls.data[filename]
 
         if filename in cls.data:
             return cls.data[filename]

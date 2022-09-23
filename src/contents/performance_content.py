@@ -1,5 +1,6 @@
 from operator import itemgetter
-from tkinter import Frame, Label, Radiobutton, StringVar, LEFT
+from tkinter import Frame, Label, \
+    Radiobutton, Checkbutton, StringVar, IntVar, LEFT
 
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
@@ -36,6 +37,7 @@ class PerformanceContent(Content):
         self.header_frame = Frame(self.frame)
         self.option_key = StringVar()
         self.option_list = None
+        self.cached = IntVar(value=1)
         self.build_header_frame()
         self.header_frame.pack()
 
@@ -69,6 +71,20 @@ class PerformanceContent(Content):
             self.update_content_frame,
             {'side': LEFT, 'padx': 15},
         )
+
+        Label(
+            self.header_frame,
+            text='Cached',
+            font='Times 16 italic',
+            fg=Color.BLUE,
+        ).pack(padx=20, side=LEFT)
+        Checkbutton(
+            self.header_frame,
+            variable=self.cached,
+        ).pack(side=LEFT)
+
+    def to_clear_cache(self) -> bool:
+        return self.cached.get() == 0
 
     def update_option_list(self, *e):
         self.option_list.set_options(
@@ -108,7 +124,8 @@ class PerformanceContent(Content):
     ):
         season = option_value.split(' ')[1]
         person_type = option_key.lower()
-        earnings = Cache.get_earnings_by_season(person_type, season)
+        earnings = Cache \
+            .get_earnings_by_season(self.to_clear_cache(), person_type, season)
         headers = []
 
         if len(earnings) > 0:
@@ -147,7 +164,8 @@ class PerformanceContent(Content):
 
     def build_meeting_performance_content(self, option_key: str):
         person_type = option_key.lower()
-        performance = Cache.get_performance_by_meeting(person_type)
+        performance = Cache \
+            .get_performance_by_meeting(self.to_clear_cache(), person_type)
         persons = []
         placings = [
             ('wins', 'W'),

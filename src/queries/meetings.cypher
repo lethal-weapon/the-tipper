@@ -11,7 +11,10 @@ MATCH (p)-[rel:RODE]->(:Horse)
 WITH p.nameEnAbbr AS person,
      rel.raceDate AS raceDate,
      rel.raceNum AS raceNum,
-     rel.placing AS placing
+     CASE
+       WHEN rel.placing IS NULL THEN 0
+       ELSE rel.placing
+       END AS placing
 
 MATCH (p:Pool)
   WHERE p.raceDate = raceDate
