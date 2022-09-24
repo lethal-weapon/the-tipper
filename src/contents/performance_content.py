@@ -1,6 +1,6 @@
 from operator import itemgetter
-from tkinter import Frame, Label, \
-    Radiobutton, Checkbutton, StringVar, IntVar, LEFT
+from tkinter import Frame, Label, LEFT, \
+    Radiobutton, Checkbutton, StringVar, IntVar
 
 from src.ui.dropdown import Dropdown
 from src.contents.content import Content
