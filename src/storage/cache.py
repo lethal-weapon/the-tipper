@@ -38,7 +38,7 @@ class Cache:
         path = f'{CACHE_DIR}/{filename}'
         try:
             with open(path, 'w') as outfile:
-                outfile.write(json.dumps(content, ensure_ascii=False))
+                outfile.write(json.dumps(content))
             print(f'{filename} saved @ {get_now()}')
         except Exception as ex:
             print(f'Error while writing data to {path}: {ex}')

@@ -39,7 +39,7 @@ class Storage:
 
         try:
             with open(path, 'w') as outfile:
-                outfile.write(json.dumps(matches, ensure_ascii=False))
+                outfile.write(json.dumps(matches))
             print(f'Meeting {race_date} saved @ {get_now()}')
         except Exception as ex:
             print(f'Error while writing data to {path}: {ex}')
