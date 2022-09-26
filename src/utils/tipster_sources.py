@@ -18,11 +18,12 @@ TIPSTER_SOURCES = {
         'Ping',
     ],
     'Newspaper': [
+        'iRace',
         'Daily',
         'HKDN',
         'Sun Journal',
         'Today Jockey',
-        'iRace',
+        'Big Font',
     ],
     'racing.on.cc': [
         '張基',
