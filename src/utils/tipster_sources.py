@@ -8,14 +8,13 @@ TIPSTER_SOURCES = {
         'Andrew Le Jeune',
         'Alan Aitken',
     ],
-    'KinBoy': [
-        'Jacky',
-        'Windson',
-        'Baron',
-        'Anthony',
-        'Oscar',
-        'KC',
-        'Ping',
+    'SCMP': [
+        'Sam Agars',
+        'Mark Worwood',
+        'Phillip Woo',
+        'Vincent Wong',
+        'Post Online',
+        'Trackwork Spy',
     ],
     'Newspaper': [
         'iRace',
@@ -24,6 +23,15 @@ TIPSTER_SOURCES = {
         'Sun Journal',
         'Today Jockey',
         'Big Font',
+    ],
+    'KinBoy': [
+        'Jacky',
+        'Windson',
+        'Baron',
+        'Anthony',
+        'Oscar',
+        'KC',
+        'Ping',
     ],
     'racing.on.cc': [
         '張基',
