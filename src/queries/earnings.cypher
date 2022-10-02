@@ -9,17 +9,20 @@ MATCH (p)-[rel:RODE]->(:Horse)
 WITH p.nameEnAbbr AS person,
      rel.raceDate AS raceDate,
      rel.raceNum AS raceNum,
-     rel.placing AS placing
+     rel.placing AS placing,
+     rel.winOdds AS winOdds
 
 MATCH (p:Pool)
   WHERE p.raceDate = raceDate
   AND p.raceNum = raceNum
   AND p.winOdds IS NOT NULL
+  AND p.placeOdds IS NOT NULL
 WITH person, raceDate, raceNum, placing,
      CASE
        WHEN placing = 1 THEN p.winOdds[0]
        WHEN placing = 2 THEN p.placeOdds[1]
-       WHEN placing = 3 THEN p.placeOdds[2]
+       WHEN placing = 3 AND size(p.placeOdds) > 2 THEN p.placeOdds[2]
+       WHEN placing = 3 OR placing = 4 THEN winOdds / 10
        ELSE 0
        END AS earning
 
@@ -38,8 +41,9 @@ WITH person, totalEarns,
      size([e IN dayEarnings WHERE e >= 7 AND e < 12]) AS normal,
      size([e IN dayEarnings WHERE e >= 12]) AS rich
 
-// only return the people who ran top 3 at least once
-  WHERE earnDays > 0
+// only return the 'regular' people who ran top 4 at least once
+  WHERE engageDays > 1
+  AND earnDays > 0
 
 WITH person, engageDays, earnDays,
      round(totalEarns, 1, 'HALF_UP') AS totalEarns,

@@ -151,18 +151,22 @@ IGNORED_PEOPLE = [
     'D. Moor',
     'C. Schofield',
     'T. Piccone',
+    'Y. Kawada',
+    'D. Lane',
+    'R. Moore',
+    'T. Marquand',
 ]
 
 JOCKEY_RANKINGS = [
     'Z. Purton',
     'J. Moreira',
     'K. Teetan',
-    'A. Badel',
     'S. DeSousa',
-    'M. Chadwick',
+    'A. Badel',
     'V. Ho',
-    'D. Leung',
+    'M. Chadwick',
     'M. Poon',
+    'D. Leung',
     'R. Maia',
     'L. Ferraris',
     'L. Hewitson',
@@ -172,11 +176,11 @@ JOCKEY_RANKINGS = [
     'V. Borges',
     'J. Chau',
     'A. Chung',
-    'A. Chan',
     'K. Yeung',
     'D. Mo',
     'V. Wong',
     'J. Wong',
+    'A. Chan',
     'A. Lai',
 ]
 

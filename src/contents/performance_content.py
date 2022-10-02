@@ -27,6 +27,9 @@ PAGE_OPTIONS = {
 
 HEADER_FONT = 'Times 14 bold'
 BODY_FONT = 'Times 13'
+BODY_FONT_BOLD = f'{BODY_FONT} bold'
+BODY_FONT_UNDERLINE = f'{BODY_FONT} underline'
+BODY_FONT_EMPHASIS = f'{BODY_FONT} bold underline'
 
 
 class PerformanceContent(Content):
@@ -202,7 +205,7 @@ class PerformanceContent(Content):
 
             for tp in placings:
                 color = self.get_performance_color(tp[1])
-                Label(self.content_frame, text=tp[1], font=BODY_FONT, fg=color) \
+                Label(self.content_frame, text=tp[1], font=BODY_FONT_BOLD, fg=color) \
                     .grid(row=2, column=col + placings.index(tp))
 
             for p in persons:
@@ -212,9 +215,13 @@ class PerformanceContent(Content):
                         continue
 
                     for tp in placings:
+                        font = BODY_FONT_BOLD
                         color = self.get_performance_color(tp[1])
                         text = f'{d[tp[0]]}' if d[tp[0]] != 0 else ''
-                        Label(self.content_frame, text=text, font=BODY_FONT, fg=color) \
+                        if tp[1] == '$':
+                            font = self.get_performance_font(text)
+
+                        Label(self.content_frame, text=text, font=font, fg=color) \
                             .grid(row=row, column=col + placings.index(tp))
 
     @staticmethod
@@ -227,3 +234,9 @@ class PerformanceContent(Content):
             return Color.BROWN
 
         return Color.BLACK
+
+    @staticmethod
+    def get_performance_font(text: str) -> str:
+        if len(text) > 0 and float(text) >= 12:
+            return BODY_FONT_EMPHASIS
+        return BODY_FONT_BOLD

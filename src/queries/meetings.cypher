@@ -11,6 +11,7 @@ MATCH (p)-[rel:RODE]->(:Horse)
 WITH p.nameEnAbbr AS person,
      rel.raceDate AS raceDate,
      rel.raceNum AS raceNum,
+     rel.winOdds AS winOdds,
      CASE
        WHEN rel.placing IS NULL THEN 0
        ELSE rel.placing
@@ -23,7 +24,8 @@ WITH person, raceDate, raceNum, placing,
      CASE
        WHEN placing = 1 THEN p.winOdds[0]
        WHEN placing = 2 THEN p.placeOdds[1]
-       WHEN placing = 3 THEN p.placeOdds[2]
+       WHEN placing = 3 AND size(p.placeOdds) > 2 THEN p.placeOdds[2]
+       WHEN placing = 3 OR placing = 4 THEN winOdds / 10
        ELSE 0
        END AS earning
 
