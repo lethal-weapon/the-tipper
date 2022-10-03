@@ -30,15 +30,18 @@ WITH person, raceDate, raceNum, placing,
        END AS earning
 
 WITH person, raceDate,
-     collect(placing) AS placings,
-     round(sum(earning), 1, 'HALF_UP') AS earnings
+     round(sum(earning), 1, 'HALF_UP') AS earnings,
+     collect({
+       placing: placing,
+       earning: round(earning, 1, 'HALF_UP')
+     }) AS data
 
 WITH person, raceDate, earnings,
-     size(placings) AS engagements,
-     size([p IN placings WHERE p = 1]) AS wins,
-     size([p IN placings WHERE p = 2]) AS seconds,
-     size([p IN placings WHERE p = 3]) AS thirds,
-     size([p IN placings WHERE p = 4]) AS fourths
+     size(data) AS engagements,
+     [d IN data WHERE d.placing = 1] AS wins,
+     [d IN data WHERE d.placing = 2] AS seconds,
+     [d IN data WHERE d.placing = 3] AS thirds,
+     [d IN data WHERE d.placing = 4] AS fourths
 
 WITH raceDate,
      toInteger(sum(earnings)) AS turnover,

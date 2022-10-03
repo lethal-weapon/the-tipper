@@ -204,8 +204,8 @@ class PerformanceContent(Content):
                 .grid(row=1, column=col, columnspan=len(placings), padx=15)
 
             for tp in placings:
-                color = self.get_performance_color(tp[1])
-                Label(self.content_frame, text=tp[1], font=BODY_FONT_BOLD, fg=color) \
+                font, color = self.get_performance_font_and_color(tp[1])
+                Label(self.content_frame, text=tp[1], font=font, fg=color) \
                     .grid(row=2, column=col + placings.index(tp))
 
             for p in persons:
@@ -215,28 +215,41 @@ class PerformanceContent(Content):
                         continue
 
                     for tp in placings:
-                        font = BODY_FONT_BOLD
-                        color = self.get_performance_color(tp[1])
-                        text = f'{d[tp[0]]}' if d[tp[0]] != 0 else ''
-                        if tp[1] == '$':
-                            font = self.get_performance_font(text)
+                        if tp[1] in ['E', '$']:
+                            earns = None
+                            text = f'{d[tp[0]]}' if d[tp[0]] != 0 else ''
+                        else:
+                            earns = [pe['earning'] for pe in d[tp[0]]]
+                            count = len(earns)
+                            text = f'{count}' if count != 0 else ''
 
+                        font, color = self.get_performance_font_and_color(tp[1], text, earns)
                         Label(self.content_frame, text=text, font=font, fg=color) \
                             .grid(row=row, column=col + placings.index(tp))
 
     @staticmethod
-    def get_performance_color(text: str) -> str:
-        if 'W' in text:
-            return Color.GOLD
-        elif 'Q' in text:
-            return Color.SILVER
-        elif 'P' in text:
-            return Color.BROWN
+    def get_performance_font_and_color(
+        kind: str,
+        count: str = '',
+        earns: [float] = None,
+    ) -> (str, str):
+        font, color = BODY_FONT_BOLD, Color.BLACK
+        if kind == 'W':
+            color = Color.GOLD
+        elif kind == 'Q':
+            color = Color.SILVER
+        elif kind == 'P':
+            color = Color.BROWN
 
-        return Color.BLACK
+        if len(count) > 0:
+            if (kind == '$' and float(count) >= 12) or \
+                (kind == 'W' and int(count) >= 2) or \
+                (kind in ['Q', 'P', 'F'] and int(count) >= 3):
+                font = BODY_FONT_EMPHASIS
 
-    @staticmethod
-    def get_performance_font(text: str) -> str:
-        if len(text) > 0 and float(text) >= 12:
-            return BODY_FONT_EMPHASIS
-        return BODY_FONT_BOLD
+        if earns:
+            if (kind == 'W' and len(list(filter(lambda e: e >= 12, earns))) > 0) or \
+                (kind in ['Q', 'P', 'F'] and len(list(filter(lambda e: e >= 4, earns))) > 0):
+                font = BODY_FONT_EMPHASIS
+
+        return font, color
